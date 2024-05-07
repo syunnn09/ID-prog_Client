@@ -101,7 +101,7 @@ export default {
     },
     doBackspace(e) {
       if (this.getValue().length === 0) {
-        if (this.values.length !== 1) {
+        if (this.editingLine !== 0) {
           this.values.splice(this.editingLine, 1);
           this.editingLine = Math.max(this.editingLine - 1, 0);
         }
@@ -140,21 +140,23 @@ export default {
   width: 50vw;
   height: 50vh;
   border: 1px solid #000;
+  overflow: auto;
   cursor: text;
 
   .main {
     width: 100%;
+    height: 100%;
     display: flex;
     justify-content: space-between;
-    align-items: center;
-    padding-left: 0.5rem;
+    align-items: flex-start;
     gap: 0.5rem;
   }
 
   .lines {
+    width: 1.5rem;
     display: flex;
     justify-content: flex-start;
-    align-items: flex-start;
+    align-items: flex-end;
     flex-direction: column;
   }
 
@@ -179,17 +181,16 @@ export default {
   }
 
   .submit {
-    position: absolute;
-    bottom: 1rem;
-    left: 1rem;
+    position: sticky;
+    width: fit-content;
+    bottom: 0.5rem;
+    left: 0.5rem;
     border: 1px solid #000;
-    border-radius: 5px;
+    background-color: #fff;
+    border-radius: 3px;
     padding: 5px 10px;
     cursor: pointer;
+    z-index: 10;
   }
 }
-/* .line {
-  height: 100%;
-  border-right: 1px solid #000;
-} */
 </style>
