@@ -3,15 +3,16 @@
     <div class="main">
       <div class="line">
         <div class="lines">
-          <p v-for="line in values.length">
-            {{ line }}
-          </p>
+          <p v-for="line in values.length" v-html="line"></p>
         </div>
       </div>
       <div class="textarea">
         <div class="area" v-for="(data, index) in values" @click="edit($event, index)" :key="index">
-          <p class="data" @keypress="keypress" v-html="data"></p>
-          <Cursor v-if="index === editingLine"></Cursor>
+          <Cursor v-if="index === editingLine && editingPos === -1"></Cursor>
+          <p class="data" v-for="(text, pos) in data" @click="h($event, index, pos)">
+            <p v-html="text"></p>
+            <Cursor v-if="index === editingLine && pos === editingPos"></Cursor>
+          </p>
         </div>
       </div>
     </div>
@@ -28,9 +29,10 @@ import axios from '../../node_modules/axios'
 export default {
   data() {
     return {
-      values: ['', '', '', '', ''],
+      values: [[], [], [], [], []],
       editing: false,
       editingLine: -1,
+      editingPos: 0,
       indentCount: 0,
     }
   },
@@ -40,14 +42,21 @@ export default {
   computed: {
 
   },
+  watch: {
+    editingPos() {
+      console.log(this.editingPos);
+    }
+  },
   methods: {
     edit(e, index) {
       e.preventDefault();
       e.stopPropagation();
       this.editing = true;
       this.editingLine = index !== undefined ? index : this.values.length - 1;
+      this.editingPos = this.getValue().length - 1;
     },
     onKeyDown(e) {
+      e.preventDefault();
       // console.log(e);
       switch (e.key) {
         case 'Enter':
@@ -55,15 +64,22 @@ export default {
           break;
         case 'ArrowUp':
           this.editingLine = Math.max(this.editingLine - 1, 0);
+          this.setPos();
           break;
         case 'ArrowDown':
           this.editingLine = Math.min(this.editingLine + 1, this.values.length - 1);
+          this.setPos();
+          break;
+        case 'ArrowLeft':
+          this.editingPos = Math.max(this.editingPos - 1, -1);
+          break;
+        case 'ArrowRight':
+          this.editingPos = Math.min(this.editingPos + 1, this.getValue().length - 1);
           break;
         case 'Escape':
           this.editing = false;
           break;
         case 'Tab':
-          e.preventDefault();
           this.setValue('&emsp;');
           break;
         case ' ':
@@ -71,6 +87,9 @@ export default {
           break;
         case 'Backspace':
           this.doBackspace(e);
+          break;
+        case 'Delete':
+          this.doDelete(e);
           break;
         default:
           if (e.key.length === 1) {
@@ -83,21 +102,24 @@ export default {
       return this.values[this.editingLine] || ''; 
     },
     setValue(value) {
-      const val = this.values[this.editingLine] || '';
-      this.values[this.editingLine] = val + value;
+      this.editingPos++;
+      this.values[this.editingLine].splice(this.editingPos, 0, value);
+    },
+    setPos() {
+      this.pos = this.getValue().length - 1;
     },
     doEnter() {
-      const isIndent = this.getValue().slice(-1) === ':';
+      const value = this.getValue();
+      const isIndent = value[value.length - 1] === ':';
       this.editingLine++;
-      this.values.splice(this.editingLine, 0, '')
+      this.values.splice(this.editingLine, 0, []);
       if (isIndent) {
         this.indentCount++;
-      } else {
-        this.indentCount = Math.max(this.indentCount - 1, 0);
       }
       for (let i = 0; i < this.indentCount; i++) {
         this.setValue('&emsp;');
       }
+      this.editingPos = this.getValue().length;
     },
     doBackspace(e) {
       if (this.getValue().length === 0) {
@@ -107,9 +129,11 @@ export default {
         }
         return;
       }
-      this.values[this.editingLine] = this.getValue().replaceAll('&nbsp;', ' ').replaceAll('&emsp;', '\t');
-      this.values[this.editingLine] = this.getValue().slice(0, -1);
-      this.values[this.editingLine] = this.getValue().replaceAll(' ', '&nbsp;').replaceAll('\t', '&emsp;');
+      this.values[this.editingLine].splice(this.editingPos, 1);
+      this.editingPos--;
+    },
+    doDelete(e) {
+
     },
     redCharas() {
       'if'
@@ -126,6 +150,12 @@ export default {
       .then(function(res) {
         console.log(res);
       })
+    },
+    h(e, index, pos) {
+      e.preventDefault();
+      e.stopPropagation();
+      this.editingLine = index;
+      this.editingPos = pos;
     }
   },
   components: {
@@ -163,7 +193,6 @@ export default {
   .textarea {
     display: flex;
     justify-content: center;
-    align-items: left;
     flex-direction: column;
     width: 100%;
     z-index: 1;
@@ -178,6 +207,7 @@ export default {
 
   .data {
     z-index: 3;
+    display: flex;
   }
 
   .submit {
