@@ -10,50 +10,122 @@
       </div>
       <div class="textarea">
         <div class="area" v-for="(data, index) in values" @click="edit($event, index)" :key="index">
-          <p class="data" @keypress="keypress">{{ data }}</p>
+          <p class="data" @keypress="keypress" v-html="data"></p>
           <Cursor v-if="index === editingLine"></Cursor>
         </div>
       </div>
+    </div>
+    <div class="submit" @click="submit">
+      <p>実行</p>
     </div>
   </div>
 </template>
 
 <script>
 import Cursor from '../components/Cursor.vue'
+import axios from '../../node_modules/axios'
 
 export default {
   data() {
     return {
-      values: ['Hello', '', '', '', ''],
+      values: ['', '', '', '', ''],
       editing: false,
       editingLine: -1,
+      indentCount: 0,
     }
   },
   mounted() {
-    
+    document.addEventListener('keydown', this.onKeyDown);
   },
   computed: {
 
   },
   methods: {
-    edit: function(e, index) {
+    edit(e, index) {
       e.preventDefault();
       e.stopPropagation();
       this.editing = true;
       this.editingLine = index !== undefined ? index : this.values.length - 1;
     },
-    keypress: function(e) {
-      if (e.key == 'Enter') {
-        this.values.push('');
+    onKeyDown(e) {
+      // console.log(e);
+      switch (e.key) {
+        case 'Enter':
+          this.doEnter();
+          break;
+        case 'ArrowUp':
+          this.editingLine = Math.max(this.editingLine - 1, 0);
+          break;
+        case 'ArrowDown':
+          this.editingLine = Math.min(this.editingLine + 1, this.values.length - 1);
+          break;
+        case 'Escape':
+          this.editing = false;
+          break;
+        case 'Tab':
+          e.preventDefault();
+          this.setValue('&emsp;');
+          break;
+        case ' ':
+          this.setValue('&nbsp;');
+          break;
+        case 'Backspace':
+          this.doBackspace(e);
+          break;
+        default:
+          if (e.key.length === 1) {
+            this.setValue(e.key);
+          }
+          break;
+      }
+    },
+    getValue() {
+      return this.values[this.editingLine] || ''; 
+    },
+    setValue(value) {
+      const val = this.values[this.editingLine] || '';
+      this.values[this.editingLine] = val + value;
+    },
+    doEnter() {
+      const isIndent = this.getValue().slice(-1) === ':';
+      this.editingLine++;
+      this.values.splice(this.editingLine, 0, '')
+      if (isIndent) {
+        this.indentCount++;
+      } else {
+        this.indentCount = Math.max(this.indentCount - 1, 0);
+      }
+      for (let i = 0; i < this.indentCount; i++) {
+        this.setValue('&emsp;');
+      }
+    },
+    doBackspace(e) {
+      if (this.getValue().length === 0) {
+        if (this.values.length !== 1) {
+          this.values.splice(this.editingLine, 1);
+          this.editingLine = Math.max(this.editingLine - 1, 0);
+        }
         return;
       }
-      if (this.editing) {
-        console.log(this.editingLine);
-        let value = this.values[this.editingLine] | ''; 
-        this.values[this.editingLine] = value + e.key;
-        console.log(this.values);
-        this.values.splice();
-      }
+      this.values[this.editingLine] = this.getValue().replaceAll('&nbsp;', ' ').replaceAll('&emsp;', '\t');
+      this.values[this.editingLine] = this.getValue().slice(0, -1);
+      this.values[this.editingLine] = this.getValue().replaceAll(' ', '&nbsp;').replaceAll('\t', '&emsp;');
+    },
+    redCharas() {
+      'if'
+      'elif'
+      'else'
+      'pass'
+      'for'
+      'in'
+    },
+    submit() {
+      axios.post('http://localhost:55555/post', {
+        data: 'sample'
+      })
+      .then(function(res) {
+        console.log(res);
+      })
     }
   },
   components: {
@@ -64,6 +136,7 @@ export default {
 
 <style lang="scss" scoped>
 .editor {
+  position: relative;
   width: 50vw;
   height: 50vh;
   border: 1px solid #000;
@@ -103,6 +176,16 @@ export default {
 
   .data {
     z-index: 3;
+  }
+
+  .submit {
+    position: absolute;
+    bottom: 1rem;
+    left: 1rem;
+    border: 1px solid #000;
+    border-radius: 5px;
+    padding: 5px 10px;
+    cursor: pointer;
   }
 }
 /* .line {
