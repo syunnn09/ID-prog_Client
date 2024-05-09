@@ -1,23 +1,29 @@
 <template>
-  <div class="editor" @click="edit">
-    <div class="main">
-      <div class="line">
-        <div class="lines">
-          <p v-for="line in values.length" v-html="line"></p>
+  <div class="Edit">
+    <div class="editor" @click="edit">
+      <div class="main">
+        <div class="line">
+          <div class="lines">
+            <p v-for="line in values.length" v-html="line"></p>
+          </div>
+        </div>
+        <div class="textarea">
+          <div class="area" v-for="(data, index) in values" @click="edit($event, index)" :key="index">
+            <Cursor v-if="index === editingLine && editingPos === -1"></Cursor>
+            <p class="data" v-for="(text, pos) in data" @click="h($event, index, pos)">
+              <p v-html="text"></p>
+              <Cursor v-if="index === editingLine && pos === editingPos"></Cursor>
+            </p>
+          </div>
         </div>
       </div>
-      <div class="textarea">
-        <div class="area" v-for="(data, index) in values" @click="edit($event, index)" :key="index">
-          <Cursor v-if="index === editingLine && editingPos === -1"></Cursor>
-          <p class="data" v-for="(text, pos) in data" @click="h($event, index, pos)">
-            <p v-html="text"></p>
-            <Cursor v-if="index === editingLine && pos === editingPos"></Cursor>
-          </p>
-        </div>
+      <div class="submit" @click="submit">
+        <p>実行</p>
       </div>
     </div>
-    <div class="submit" @click="submit">
-      <p>実行</p>
+    <div class="result">
+      <div ref="result"></div>
+      <div class="loader" v-if="loading"></div>
     </div>
   </div>
 </template>
@@ -31,6 +37,7 @@ export default {
     return {
       values: [[], [], [], [], []],
       editing: false,
+      loading: false,
       editingLine: -1,
       editingPos: 0,
       indentCount: 0,
@@ -44,7 +51,7 @@ export default {
   },
   watch: {
     editingPos() {
-      console.log(this.editingPos);
+      // console.log(this.editingPos);
     }
   },
   methods: {
@@ -91,6 +98,12 @@ export default {
         case 'Delete':
           this.doDelete(e);
           break;
+        case 'Home':
+          this.editingPos = -1;
+          break;
+        case 'End':
+          this.setPos()
+          break;
         default:
           if (e.key.length === 1) {
             this.setValue(e.key);
@@ -106,7 +119,7 @@ export default {
       this.values[this.editingLine].splice(this.editingPos, 0, value);
     },
     setPos() {
-      this.pos = this.getValue().length - 1;
+      this.editingPos = this.getValue().length - 1;
     },
     doEnter() {
       const value = this.getValue();
@@ -115,17 +128,20 @@ export default {
       this.values.splice(this.editingLine, 0, []);
       if (isIndent) {
         this.indentCount++;
+      } else {
+        this.indentCount = 0;
       }
       for (let i = 0; i < this.indentCount; i++) {
         this.setValue('&emsp;');
       }
-      this.editingPos = this.getValue().length;
+      this.setPos();
     },
     doBackspace(e) {
       if (this.getValue().length === 0) {
         if (this.editingLine !== 0) {
           this.values.splice(this.editingLine, 1);
           this.editingLine = Math.max(this.editingLine - 1, 0);
+          this.setPos();
         }
         return;
       }
@@ -143,13 +159,34 @@ export default {
       'for'
       'in'
     },
+    getData: function() {
+      let data = '';
+      for (let value of this.values) {
+        for (let val2 of value) {
+          const val3 = val2.replace('&nbsp;', ' ').replace('&emsp;', '\t');
+          data += val3;
+        }
+        data += '\n';
+      }
+      return data;
+    },
     submit() {
+      this.$refs.result.innerText = '';
+      this.loading = true;
       axios.post('http://localhost:55555/post', {
-        data: 'sample'
+        data: this.getData()
       })
       .then(function(res) {
-        console.log(res);
-      })
+        this.loading = false;
+        this.$refs.result.innerText = res.data.res;
+        if (res.data.err) {
+          this.$refs.result.innerText += res.data.err;
+        }
+      }.bind(this))
+      .catch(err => function() {
+        console.log(err);
+        this.loading = false;
+      }.bind(this));
     },
     h(e, index, pos) {
       e.preventDefault();
@@ -165,62 +202,89 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.editor {
-  position: relative;
-  width: 50vw;
-  height: 50vh;
-  border: 1px solid #000;
-  overflow: auto;
-  cursor: text;
-
-  .main {
-    width: 100%;
-    height: 100%;
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    gap: 0.5rem;
-  }
-
-  .lines {
-    width: 1.5rem;
-    display: flex;
-    justify-content: flex-start;
-    align-items: flex-end;
-    flex-direction: column;
-  }
-
-  .textarea {
-    display: flex;
-    justify-content: center;
-    flex-direction: column;
-    width: 100%;
-    z-index: 1;
-  }
-
-  .area {
-    display: flex;
-    align-items: center;
-    height: 1.5rem;
-    gap: 0.1rem;
-  }
-
-  .data {
-    z-index: 3;
-    display: flex;
-  }
-
-  .submit {
-    position: sticky;
-    width: fit-content;
-    bottom: 0.5rem;
-    left: 0.5rem;
+.Edit {
+  .editor {
+    position: relative;
+    width: 50vw;
+    height: 50vh;
     border: 1px solid #000;
-    background-color: #fff;
-    border-radius: 3px;
-    padding: 5px 10px;
-    cursor: pointer;
-    z-index: 10;
+    overflow: auto;
+    cursor: text;
+
+    .main {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 0.5rem;
+    }
+
+    .lines {
+      width: 1.5rem;
+      display: flex;
+      justify-content: flex-start;
+      align-items: flex-end;
+      flex-direction: column;
+    }
+
+    .textarea {
+      display: flex;
+      justify-content: center;
+      flex-direction: column;
+      width: 100%;
+      z-index: 1;
+    }
+
+    .area {
+      display: flex;
+      align-items: center;
+      height: 1.5rem;
+      gap: 0.1rem;
+    }
+
+    .data {
+      z-index: 3;
+      display: flex;
+    }
+
+    .submit {
+      position: sticky;
+      width: fit-content;
+      bottom: 0.5rem;
+      left: 0.5rem;
+      border: 1px solid #000;
+      background-color: #fff;
+      border-radius: 3px;
+      padding: 5px 10px;
+      cursor: pointer;
+      z-index: 10;
+    }
+
+  }
+  .result {
+    height: 20vh;
+    width: 50vw;
+    border: 1px solid #000;
+    overflow: auto;
+  }
+  /* HTML: <div class="loader"></div> */
+  .loader {
+    width: 30px;
+    aspect-ratio: 2;
+    --_g: no-repeat radial-gradient(circle closest-side,#000 90%,#0000);
+    background: 
+      var(--_g) 0%   50%,
+      var(--_g) 50%  50%,
+      var(--_g) 100% 50%;
+    background-size: calc(100%/3) 50%;
+    animation: l3 1s infinite linear;
+  }
+  @keyframes l3 {
+    20%{background-position:0%   0%, 50%  50%,100%  50%}
+    40%{background-position:0% 100%, 50%   0%,100%  50%}
+    60%{background-position:0%  50%, 50% 100%,100%   0%}
+    80%{background-position:0%  50%, 50%  50%,100% 100%}
   }
 }
 </style>
