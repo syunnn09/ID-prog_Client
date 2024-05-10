@@ -10,10 +10,10 @@
         <div class="textarea">
           <div class="area" v-for="(data, index) in values" @click="edit($event, index)" :key="index">
             <Cursor v-if="index === editingLine && editingPos === -1"></Cursor>
-            <p class="data" v-for="(text, pos) in data" @click="h($event, index, pos)">
+            <div class="data" v-for="(text, pos) in data" @click="h($event, index, pos)">
               <p v-html="text"></p>
               <Cursor v-if="index === editingLine && pos === editingPos"></Cursor>
-            </p>
+            </div>
           </div>
         </div>
       </div>
@@ -25,6 +25,7 @@
       <div ref="result"></div>
       <div class="loader" v-if="loading"></div>
     </div>
+    <div class="smaple" @click="sample"><p>Hello World!</p></div>
   </div>
 </template>
 
@@ -56,6 +57,7 @@ export default {
   },
   methods: {
     edit(e, index) {
+      console.log(e);
       e.preventDefault();
       e.stopPropagation();
       this.editing = true;
@@ -78,10 +80,10 @@ export default {
           this.setPos();
           break;
         case 'ArrowLeft':
-          this.editingPos = Math.max(this.editingPos - 1, -1);
+          this.doArrowLeft();
           break;
         case 'ArrowRight':
-          this.editingPos = Math.min(this.editingPos + 1, this.getValue().length - 1);
+          this.doArrowRight();
           break;
         case 'Escape':
           this.editing = false;
@@ -137,6 +139,7 @@ export default {
       this.setPos();
     },
     doBackspace(e) {
+      console.log(e);
       if (this.getValue().length === 0) {
         if (this.editingLine !== 0) {
           this.values.splice(this.editingLine, 1);
@@ -147,6 +150,22 @@ export default {
       }
       this.values[this.editingLine].splice(this.editingPos, 1);
       this.editingPos--;
+    },
+    doArrowLeft() {
+      if (this.editingPos === -1) {
+        this.editingLine--;
+        this.setPos();
+        return;
+      }
+      this.editingPos = Math.max(this.editingPos - 1, -1);
+    },
+    doArrowRight() {
+      if (this.editingPos === this.getValue().length - 1) {
+        this.editingLine++;
+        this.editingPos = -1;
+        return;
+      }
+      this.editingPos = Math.min(this.editingPos + 1, this.getValue().length - 1);
     },
     doDelete(e) {
 
@@ -193,6 +212,9 @@ export default {
       e.stopPropagation();
       this.editingLine = index;
       this.editingPos = pos;
+    },
+    sample(e) {
+      console.log(e)
     }
   },
   components: {
