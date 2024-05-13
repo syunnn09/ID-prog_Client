@@ -32,6 +32,7 @@
 <script>
 import Cursor from '../components/Cursor.vue'
 import axios from '../../node_modules/axios'
+import { useTextSelection } from '@vueuse/core'
 
 export default {
   data() {
@@ -42,12 +43,16 @@ export default {
       editingLine: -1,
       editingPos: 0,
       indentCount: 0,
+      selectedText: null,
     }
+  },
+  created() {
+    this.selectedText = useTextSelection();
   },
   mounted() {
     document.addEventListener('keydown', this.onKeyDown);
   },
-  computed: {
+  computed() {
 
   },
   watch: {
@@ -72,10 +77,18 @@ export default {
           this.doEnter();
           break;
         case 'ArrowUp':
+          if (e.altKey) {
+            this.doSwap('up');
+            break;
+          }
           this.editingLine = Math.max(this.editingLine - 1, 0);
           this.setPos();
           break;
         case 'ArrowDown':
+          if (e.altKey) {
+            this.doSwap('down');
+            break;
+          }
           this.editingLine = Math.min(this.editingLine + 1, this.values.length - 1);
           this.setPos();
           break;
@@ -169,6 +182,13 @@ export default {
     },
     doDelete(e) {
 
+    },
+    doSwap(key) {
+      const line = this.editingLine + (key === 'up' ? -1: 1);
+      const temp = this.values[this.editingLine];
+      this.values[this.editingLine] = this.values[line];
+      this.values[line] = temp;
+      this.editingLine = line;
     },
     redCharas() {
       'if'
