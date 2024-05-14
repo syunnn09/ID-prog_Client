@@ -1,7 +1,8 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
 import Editor from '../views/Editor.vue'
-import EditorJS from '../views/EditorJS.vue'
+import Login from '../views/Login.vue'
+import store from '@/store/index.js'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -25,11 +26,19 @@ const router = createRouter({
       component: Editor
     },
     {
-      path: '/edit',
-      name: 'editorjs',
-      component: EditorJS
+      path: '/login',
+      name: 'login',
+      component: Login
     },
   ]
-})
+});
+
+router.beforeEach((to, from, next) => {
+  if (to.matched.some(record => record.meta.requiresAuth) && !store.state.user) {
+    next({ path: '/login', query: { redirect: to.fullPath } });
+  } else {
+    next();
+  }
+});
 
 export default router
