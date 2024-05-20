@@ -1,6 +1,6 @@
 <template>
-  <div class="Edit">
-    <div class="editor" @click="edit">
+  <div class="Edit w-100">
+    <div class="editor w-100" @click="edit">
       <div class="main">
         <div class="line">
           <div class="lines">
@@ -29,12 +29,14 @@
   </div>
 </template>
 
-<script>
+<script setup>
 import Cursor from '../components/Cursor.vue'
 import axios from '../../node_modules/axios'
 import { useTextSelection } from '@vueuse/core'
 import { onAuthStateChanged, getAuth } from 'firebase/auth';
+</script>
 
+<script>
 export default {
   data() {
     return {
@@ -47,6 +49,13 @@ export default {
       selectedText: null,
       user: null,
     }
+  },
+  props: {
+    isEdit: {
+      type: Boolean,
+      required: false,
+      default: false
+    },
   },
   created() {
     this.selectedText = useTextSelection();
@@ -77,11 +86,13 @@ export default {
       this.editingPos = this.getValue().length - 1;
     },
     onKeyDown(e) {
+      if (!this.editing && this.isEdit) return;
+
       e.preventDefault();
       // console.log(e);
       switch (e.key) {
         case 'Enter':
-          this.doEnter();
+          this.doEnter(e);
           break;
         case 'ArrowUp':
           if (e.altKey) {
@@ -143,7 +154,12 @@ export default {
     setPos() {
       this.editingPos = this.getValue().length - 1;
     },
-    doEnter() {
+    doEnter(e) {
+      if (e.ctrlKey) {
+        this.submit();
+        return;
+      }
+
       const value = this.getValue();
       const isIndent = value[value.length - 1] === ':';
       this.editingLine++;
@@ -253,9 +269,12 @@ export default {
 
 <style lang="scss" scoped>
 .Edit {
+  p {
+    margin-bottom: 0;
+  }
+
   .editor {
     position: relative;
-    width: 50vw;
     height: 50vh;
     border: 1px solid #000;
     overflow: auto;
@@ -263,7 +282,7 @@ export default {
 
     .main {
       width: 100%;
-      height: 100%;
+      height: 90%;
       display: flex;
       justify-content: space-between;
       align-items: flex-start;
@@ -314,7 +333,6 @@ export default {
   }
   .result {
     height: 20vh;
-    width: 50vw;
     border: 1px solid #000;
     overflow: auto;
   }
