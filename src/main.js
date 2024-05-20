@@ -3,6 +3,7 @@ import './assets/main.css'
 import { createApp } from 'vue'
 import App from './App.vue'
 import router from './router'
+<<<<<<< HEAD
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
@@ -23,8 +24,16 @@ const firebaseConfig = {
 
 // Initialize Firebase
 initializeApp(firebaseConfig);
+=======
+import store from './store'
+>>>>>>> 9d9642f28d952ed1890028a5c4b3bd46424e6cc2
 
 const app = createApp(App)
 
 app.use(router)
+<<<<<<< HEAD
+=======
+app.use(store)
+
+>>>>>>> 9d9642f28d952ed1890028a5c4b3bd46424e6cc2
 app.mount('#app')

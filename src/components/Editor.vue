@@ -33,7 +33,10 @@
 import Cursor from '../components/Cursor.vue'
 import axios from '../../node_modules/axios'
 import { useTextSelection } from '@vueuse/core'
+<<<<<<< HEAD
 import { onAuthStateChanged, getAuth } from 'firebase/auth';
+=======
+>>>>>>> 9d9642f28d952ed1890028a5c4b3bd46424e6cc2
 
 export default {
   data() {
@@ -45,7 +48,10 @@ export default {
       editingPos: 0,
       indentCount: 0,
       selectedText: null,
+<<<<<<< HEAD
       user: null,
+=======
+>>>>>>> 9d9642f28d952ed1890028a5c4b3bd46424e6cc2
     }
   },
   created() {
@@ -53,11 +59,14 @@ export default {
   },
   mounted() {
     document.addEventListener('keydown', this.onKeyDown);
+<<<<<<< HEAD
     const auth = getAuth();
     onAuthStateChanged(auth, (user) => {
       this.user = user;
       console.log(user);
     });
+=======
+>>>>>>> 9d9642f28d952ed1890028a5c4b3bd46424e6cc2
   },
   computed() {
 
@@ -69,7 +78,11 @@ export default {
   },
   methods: {
     edit(e, index) {
+<<<<<<< HEAD
       // console.log(e);
+=======
+      console.log(e);
+>>>>>>> 9d9642f28d952ed1890028a5c4b3bd46424e6cc2
       e.preventDefault();
       e.stopPropagation();
       this.editing = true;
@@ -159,7 +172,11 @@ export default {
       this.setPos();
     },
     doBackspace(e) {
+<<<<<<< HEAD
       // console.log(e);
+=======
+      console.log(e);
+>>>>>>> 9d9642f28d952ed1890028a5c4b3bd46424e6cc2
       if (this.getValue().length === 0) {
         if (this.editingLine !== 0) {
           this.values.splice(this.editingLine, 1);
@@ -220,7 +237,10 @@ export default {
       this.$refs.result.innerText = '';
       this.loading = true;
       axios.post('http://localhost:55555/post', {
+<<<<<<< HEAD
         user: this.user,
+=======
+>>>>>>> 9d9642f28d952ed1890028a5c4b3bd46424e6cc2
         data: this.getData()
       })
       .then(function(res) {
