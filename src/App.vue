@@ -4,15 +4,15 @@ import { getAuth, signOut, onAuthStateChanged } from 'firebase/auth'
 </script>
 
 <template>
-  <header>
-    <div class="wrapper">
-      <div class="logout" v-if="user !== null" @click="logout">ログアウト</div>
-      <nav>
-        <!-- <RouterLink to="/">Home</RouterLink>
-        <RouterLink to="/about">About</RouterLink> -->
-        <RouterLink to="/editor">Editor</RouterLink>
-        <RouterLink to="/login">Login</RouterLink>
-      </nav>
+  <header class="navbar navbar-expand-lg bg-body-tertiary p-3">
+    <div class="header d-flex justify-content-between align-items-center">
+      <div class="title">
+        <h3>ID-prog</h3>
+      </div>
+      <div class="btns">
+        <div class="logout" v-if="user !== null" @click="logout">ログアウト</div>
+        <RouterLink to="/login" v-else>ログイン</RouterLink>
+      </div>
     </div>
   </header>
 
@@ -42,7 +42,7 @@ export default {
           this.$router.push({ name: 'login', query: { logout: true } });
         })
         .catch(err => console.log(err))
-    }
+    },
   }
 }
 </script>
@@ -53,65 +53,15 @@ export default {
   padding: 0;
   box-sizing: border-box;
 }
+
+#app {
+  width: 100% !important;
+}
+
 header {
-  line-height: 1.5;
-  max-height: 100vh;
-}
-
-.logo {
-  display: block;
-  margin: 0 auto 2rem;
-}
-
-nav {
+  position: fixed;
+  left: 0;
+  top: 0;
   width: 100%;
-  font-size: 12px;
-  text-align: center;
-  margin-top: 2rem;
-}
-
-nav a.router-link-exact-active {
-  color: var(--color-text);
-}
-
-nav a.router-link-exact-active:hover {
-  background-color: transparent;
-}
-
-nav a {
-  display: inline-block;
-  padding: 0 1rem;
-  border-left: 1px solid var(--color-border);
-}
-
-nav a:first-of-type {
-  border: 0;
-}
-
-@media (min-width: 1024px) {
-  header {
-    display: flex;
-    place-items: center;
-    padding-right: calc(var(--section-gap) / 2);
-  }
-
-  .logo {
-    margin: 0 2rem 0 0;
-  }
-
-  header .wrapper {
-    display: flex;
-    place-items: flex-start;
-    flex-wrap: wrap;
-  }
-
-  nav {
-    text-align: left;
-    margin-left: -1rem;
-    font-size: 1rem;
-
-    padding: 1rem 0;
-    margin-top: 1rem;
-  }
 }
 </style>
