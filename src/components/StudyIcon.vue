@@ -1,12 +1,12 @@
 <template>
   <div class="studyIcon">
-    <router-link :to="{ name: 'study', params: { id: id }}">
+    <router-link :to="{ name: 'study', params: { id: study.id }}">
       <div class="card" style="width: 18rem;">
         <div class="d-flex justify-content-center border-bottom">
           <PythonLogo />
         </div>
         <div class="card-body">
-          <p class="card-text">{{ text }}</p>
+          <p class="card-text">{{ study.title }}</p>
           <div class="progress" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="height: 0.5rem;">
             <div class="progress-bar" :style="width"></div>
           </div>
@@ -24,25 +24,14 @@ export default {
     PythonLogo
   },
   props: {
-    text: {
-      type: String,
-      required: false,
-      default: ""
+    study: {
+      type: Object,
+      required: true,
     },
-    progress: {
-      type: Number,
-      required: false,
-      default: 0
-    }
-  },
-  data() {
-    return {
-      id: 1
-    }
   },
   computed: {
     width() {
-      return `width: ${this.progress}%;`;
+      return `width: ${this.study.progress}%;`;
     },
   }
 }
