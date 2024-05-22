@@ -1,20 +1,23 @@
 <template>
-  <div class="login">
-    <div class="text">
-      <p v-if="text">{{ text }}</p>
+  <div class="login d-flex justify-content-center">
+    <div class="mb-3">
+      <div class="w-100">
+        <div class="text">
+          <p v-if="text">{{ text }}</p>
+        </div>
+        <main class="form-signin w-100 m-auto">
+          <div class="form-floating my-3">
+            <input type="text" class="form-control" id="username" v-model="username" @keyup.enter="signin">
+            <label for="username">メールアドレス</label>
+          </div>
+          <div class="form-floating my-3">
+            <input type="password" class="form-control" id="password" v-model="password" @keyup.enter="signin">
+            <label for="password">パスワード</label>
+          </div>
+          <button class="btn btn-primary w-100 mb-3 py-2" @click="signin">ログイン</button>
+        </main>
+      </div>
     </div>
-    <main class="form-signin w-100 m-auto">
-      <div class="form-floating my-3">
-        <input type="text" class="form-control" id="username" v-model="username" @keyup.enter="signin">
-        <label for="username">メールアドレス</label>
-      </div>
-      <div class="form-floating my-3">
-        <input type="password" class="form-control" id="password" v-model="password" @keyup.enter="signin">
-        <label for="password">パスワード</label>
-      </div>
-      <button class="btn btn-primary w-100 mb-3 py-2" @click="signin">ログイン</button>
-      <button class="btn btn-primary w-100 py-2" @click="createAccount">新規作成</button>
-    </main>
   </div>
 </template>
 
@@ -43,7 +46,7 @@ export default {
       this.user = user;
       console.log(user);
       if (this.user !== null) {
-        this.$router.push('/editor');
+        this.$router.push('/');
       }
     });
     if (this.$route.query.logout === 'true') {
@@ -63,14 +66,6 @@ export default {
         })
         .catch(err => this.text = 'ログイン失敗');
     },
-    createAccount() {
-      const auth = getAuth();
-      createUserWithEmailAndPassword(auth, this.username, this.password)
-        .then((userCredential) => {
-          const user = userCredential.user;
-        })
-        .catch(err => console.log(err));
-    }
   }
 }
 </script>

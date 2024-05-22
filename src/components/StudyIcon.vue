@@ -1,7 +1,7 @@
 <template>
   <div class="studyIcon">
     <router-link :to="{ name: 'study', params: { id: study.id }}">
-      <div class="card" style="width: 18rem;">
+      <div class="card" style="width: 13rem;">
         <div class="d-flex justify-content-center border-bottom">
           <PythonLogo />
         </div>

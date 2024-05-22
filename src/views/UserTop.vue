@@ -1,8 +1,15 @@
 <template>
-  <div>
-    <div class="icons row row-cols-1 row-cols-md-3 g-3">
-      <div class="icon col" v-for="study of studies">
-        <StudyIcon :study="study" />
+  <div class="userTop">
+
+    <div class="studies">
+      <p class="mb-0">教材一覧</p>
+      <div class="icons">
+        <div class="spinner-border" role="status" v-if="!studies.length">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+        <div class="icon" v-for="study of studies">
+          <StudyIcon :study="study" />
+        </div>
       </div>
     </div>
   </div>
@@ -44,3 +51,13 @@ export default {
   }
 }
 </script>
+
+<style>
+.icons {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+</style>
