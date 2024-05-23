@@ -56,7 +56,6 @@ export default {
         .catch((err) => this.invalid(err.message))
     },
     invalid(message) {
-      console.log(message);
       if (message.includes('auth/invalid-email')) {
         this.err = '正しいメールアドレスを入力してください。';
         return;
