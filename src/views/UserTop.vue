@@ -7,8 +7,8 @@
         <div class="spinner-border" role="status" v-if="!studies.length">
           <span class="visually-hidden">Loading...</span>
         </div>
-        <div class="icon" v-for="study of studies">
-          <StudyIcon :study="study" />
+        <div class="icon" v-for="study of studies" :key="study">
+          <StudyIcon :study="study"></StudyIcon>
         </div>
       </div>
     </div>
