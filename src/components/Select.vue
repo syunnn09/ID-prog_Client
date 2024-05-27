@@ -1,12 +1,12 @@
 <template>
-  <div class="select">
-    <p>{{ question }}</p>
+  <div class="select px-5">
+    <p v-html="question"></p>
     <div class="selections">
       <div class="form-check" v-for="(choice, i) in choices">
         <input type="radio" class="form-check-input" name="selection" v-model="selected" :id="choice" :value="i">
-        <label class="form-check-label" :for="choice">{{ choice }}</label>
+        <label class="form-check-label user-select-none" :for="choice">{{ choice }}</label>
       </div>
-      <input type="submit" @click="checkAnswer" value="決定">
+      <input type="submit" class="mt-2" @click="checkAnswer" value="決定">
       <p>{{ text }}</p>
     </div>
   </div>

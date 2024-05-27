@@ -6,7 +6,9 @@ import { getAuth, signOut, onAuthStateChanged } from 'firebase/auth'
 <template>
   <header class="navbar navbar-light bg-light justify-content-between p-3">
     <div class="title">
-      <h3>ID-prog</h3>
+      <h3>
+        <RouterLink to="/">ID-prog</RouterLink>
+      </h3>
     </div>
     <div class="btns" v-if="user !== null">
       <a href="javascript:void(0)" class="logout" v-if="user !== null" @click="logout">ログアウト</a>

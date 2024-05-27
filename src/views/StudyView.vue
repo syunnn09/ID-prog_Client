@@ -1,10 +1,11 @@
 <template>
   <div class="studyView">
     <div v-if="data">
-      <p>{{ data.title }}</p>
+      <h4>{{ data.title }}</h4>
+      <SelectTab :data="data" :tab="tab" @onChangeTab="onChangeTab" />
       <Select
-        v-if="data.sections[1].questions[0].questionType === constant.QUESTION_TYPE.CHOICE"
-        :data="data.sections[1].questions[0]"
+        v-if="data.sections[2].questions[tab].questionType === constant.QUESTION_TYPE.CHOICE"
+        :data="data.sections[2].questions[tab]"
       ></Select>
     </div>
   </div>
@@ -13,17 +14,21 @@
 <script setup>
 import axios from 'axios';
 import constant from "@/consts/const";
-import Select from '../components/Select.vue'
+
+import Select from '@/components/Select.vue';
+import SelectTab from '@/components/SelectTab.vue';
 </script>
 
 <script>
 export default {
   components: {
-    Select
+    Select,
+    SelectTab
   },
   data() {
     return {
       data: null,
+      tab: 0,
     }
   },
   created() {
@@ -32,10 +37,14 @@ export default {
       id: num
     })
       .then((data) => {
-        // console.log(data.data);
         this.data = data.data;
       })
   },
+  methods: {
+    onChangeTab(tab) {
+      this.tab = tab;
+    }
+  }
 }
 </script>
 
