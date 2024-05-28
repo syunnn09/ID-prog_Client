@@ -7,7 +7,7 @@
     </div>
     <div class="w-100">
       <textarea
-        class="form-control textarea"
+        class="form-control textarea resize-none"
         v-model="value"
         ref="textarea"
         @scroll="onScroll"
@@ -17,11 +17,19 @@
         autocapitalize="off"
         spellcheck="off">
       </textarea>
-      <div class="submit" @click="submit">
-        <p>実行</p>
+      <div class="customArea d-flex">
+        <div class="submit" @click="submit">
+          <p>実行</p>
+        </div>
+        <div class="submit" @click="input">
+          <p>入力</p>
+        </div>
       </div>
       <div class="result">
-        <div v-html="result"></div>
+        <div v-html="result" v-if="showOutput"></div>
+        <div v-if="showInput" class="h-100">
+          <textarea v-model="args" class="inputTextarea resize-none"></textarea>
+        </div>
         <div class="loader" v-if="loading"></div>
       </div>
     </div>
@@ -42,7 +50,9 @@ export default {
       loading: false,
       user: null,
       divTop: 0,
-      args: "hello world",
+      args: "",
+      showInput: false,
+      showOutput: true,
     }
   },
   created() {
@@ -70,7 +80,7 @@ export default {
           this.insertTab(e);
           break;
       }
-      localStorage.setItem('value', {user: "", value: this.value});
+      localStorage.setItem('value', this.value);
     },
     onScroll(e) {
       this.divTop = -e.target.scrollTop;
@@ -105,6 +115,10 @@ export default {
       textarea.value = updatedText;
       const newCursorPosition = cursorPosition + tab.length;
       textarea.setSelectionRange(newCursorPosition, newCursorPosition);
+    },
+    input() {
+      this.showInput = true;
+      this.showOutput = false;
     }
   }
 }
@@ -114,27 +128,37 @@ export default {
 .newEditor {
   .lineContainer {
     width: 1.5rem;
-    margin-top: 6px;
     max-height: 50vh;
     overflow: hidden;
   }
 
   .textarea {
+    padding: 0;
     height: 50vh;
-    resize: none;
     box-shadow: none;
   }
+  
+  .resize-none {
+    resize: none;
+  }
 
-  .submit {
-    width: fit-content;
-    bottom: 0.5rem;
-    left: 0.5rem;
-    border: 1px solid #000;
-    background-color: #fff;
-    border-radius: 3px;
-    padding: 5px 10px;
-    cursor: pointer;
-    z-index: 10;
+  .customArea {
+    .submit {
+      width: fit-content;
+      bottom: 0.5rem;
+      left: 0.5rem;
+      border: 1px solid #000;
+      background-color: #fff;
+      border-radius: 3px;
+      padding: 5px 10px;
+      cursor: pointer;
+      z-index: 10;
+    }
+  }
+
+  .inputTextarea {
+    width: 100%;
+    height: 100%;
   }
 
   .result {
