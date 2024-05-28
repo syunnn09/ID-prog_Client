@@ -1,15 +1,18 @@
 <template>
   <div class="Editor">
-    <Editor :isEdit="isEdit" />
+    <!-- <Editor :isEdit="isEdit" /> -->
+    <NewEditor />
   </div>
 </template>
 
 <script>
-import Editor from '../components/Editor.vue'
+import Editor from '@/components/Editor.vue'
+import NewEditor from '@/components/NewEditor.vue';
 
 export default {
   components: {
-    Editor
+    Editor,
+    NewEditor
   },
   data() {
     return {

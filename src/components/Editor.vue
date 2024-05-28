@@ -1,5 +1,5 @@
 <template>
-  <div class="Edit w-100">
+  <div class="Edit w-100" @input="onKeyDown">
     <div class="editor w-100" @click="edit">
       <div class="main">
         <div class="line">
@@ -22,10 +22,9 @@
       </div>
     </div>
     <div class="result">
-      <div ref="result"></div>
+      <div v-html="result"></div>
       <div class="loader" v-if="loading"></div>
     </div>
-    <div class="smaple" @click="sample"><p>Hello World!</p></div>
   </div>
 </template>
 
@@ -48,6 +47,7 @@ export default {
       indentCount: 0,
       selectedText: null,
       user: null,
+      result: '',
     }
   },
   props: {
@@ -61,7 +61,7 @@ export default {
     this.selectedText = useTextSelection();
   },
   mounted() {
-    document.addEventListener('keydown', this.onKeyDown);
+    // document.addEventListener('keydown', this.onKeyDown);
     const auth = getAuth();
     onAuthStateChanged(auth, (user) => {
       this.user = user;
@@ -233,7 +233,7 @@ export default {
       return data;
     },
     submit() {
-      this.$refs.result.innerText = '';
+      this.result = '';
       this.loading = true;
       axios.post('http://localhost:55555/post', {
         user: this.user,
@@ -241,9 +241,9 @@ export default {
       })
       .then(function(res) {
         this.loading = false;
-        this.$refs.result.innerText = res.data.res;
+        this.result = res.data.res;
         if (res.data.err) {
-          this.$refs.result.innerText += res.data.err;
+          this.result += res.data.err;
         }
       }.bind(this))
       .catch(err => function() {
@@ -336,7 +336,7 @@ export default {
     border: 1px solid #000;
     overflow: auto;
   }
-  /* HTML: <div class="loader"></div> */
+
   .loader {
     width: 30px;
     aspect-ratio: 2;

@@ -3,10 +3,13 @@
     <div v-if="data">
       <h4>{{ data.title }}</h4>
       <SelectTab :data="data" :tab="tab" @onChangeTab="onChangeTab" />
-      <Select
-        v-if="data.sections[2].questions[tab].questionType === constant.QUESTION_TYPE.CHOICE"
-        :data="data.sections[2].questions[tab]"
-      ></Select>
+      <div v-for="(question, index) of data.sections[2].questions" :key="index">
+        <Select
+          v-if="question.questionType === constant.QUESTION_TYPE.CHOICE"
+          v-show="tab === index"
+          :data="question"
+        ></Select>
+      </div>
     </div>
   </div>
 </template>

@@ -10,12 +10,14 @@ import { getAuth, signOut, onAuthStateChanged } from 'firebase/auth'
         <RouterLink to="/">ID-prog</RouterLink>
       </h3>
     </div>
-    <div class="btns" v-if="user !== null">
-      <a href="javascript:void(0)" class="logout" v-if="user !== null" @click="logout">ログアウト</a>
-    </div>
-    <div class="btns" v-else>
-      <RouterLink to="/signup" class="btn btn-outline-success p-1 mx-1">新規作成</RouterLink>
-      <RouterLink to="/login" class="btn btn-outline-success p-1 mx-1">ログイン</RouterLink>
+    <div v-show="isAuthChecked">
+      <div class="btns" v-if="user !== null">
+        <a href="javascript:void(0)" class="logout" v-if="user !== null" @click="logout">ログアウト</a>
+      </div>
+      <div class="btns" v-else>
+        <RouterLink to="/signup" class="btn btn-outline-success p-1 mx-1">新規作成</RouterLink>
+        <RouterLink to="/login" class="btn btn-outline-success p-1 mx-1">ログイン</RouterLink>
+      </div>
     </div>
   </header>
 
@@ -28,13 +30,15 @@ import { getAuth, signOut, onAuthStateChanged } from 'firebase/auth'
 export default {
   data() {
     return {
-      user: null
+      user: null,
+      isAuthChecked: false,
     }
   },
   created() {
     const auth = getAuth();
     onAuthStateChanged(auth, (user) => {
       this.user = user;
+      this.isAuthChecked = true;
       console.log(user);
     });
   },
