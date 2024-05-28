@@ -2,12 +2,18 @@
   <div class="studyView">
     <div v-if="data">
       <h4>{{ data.title }}</h4>
-      <SelectTab :data="data" :tab="tab" @onChangeTab="onChangeTab" />
-      <div v-for="(question, index) of data.sections[2].questions" :key="index">
+      <div class="sections d-flex gap-3">
+        <div v-for="(section, i) of data.sections">
+          <div @click="changeSection(i)">{{ section.title }}</div>
+        </div>
+      </div>
+      <SelectTab :data="data" :tab="tab" :section="section" @onChangeTab="onChangeTab" />
+      <div v-for="(question, index) of data.sections[section].questions" :key="index">
         <Select
           v-if="question.questionType === constant.QUESTION_TYPE.CHOICE"
           v-show="tab === index"
           :data="question"
+          :index="index"
         ></Select>
       </div>
     </div>
@@ -32,6 +38,7 @@ export default {
     return {
       data: null,
       tab: 0,
+      section: 0,
     }
   },
   created() {
@@ -46,7 +53,10 @@ export default {
   methods: {
     onChangeTab(tab) {
       this.tab = tab;
-    }
+    },
+    changeSection(section) {
+      this.section = section;
+    },
   }
 }
 </script>

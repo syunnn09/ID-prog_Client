@@ -19,11 +19,15 @@ export default {
       type: Number,
       required: false,
       default: 0
+    },
+    section: {
+      type: Number,
+      required: true
     }
   },
   computed: {
     questions() {
-      return this.data.sections[2].questions.length;
+      return this.data.sections[this.section].questions.length;
     }
   },
   methods: {

@@ -3,7 +3,7 @@
     <p v-html="question"></p>
     <div class="selections">
       <div class="form-check" v-for="(choice, i) in choices">
-        <input type="radio" class="form-check-input" name="selection" v-model="selected" :id="choice" :value="i">
+        <input type="radio" class="form-check-input" :name="'selection-' + index" v-model="selected" :id="choice" :value="i">
         <label class="form-check-label user-select-none" :for="choice">{{ choice }}</label>
       </div>
       <input type="submit" class="mt-2" @click="checkAnswer" value="決定">
@@ -18,6 +18,10 @@ export default {
     data: {
       type: Object,
       required: true
+    },
+    index: {
+      type: Number,
+      requierd: true
     }
   },
   mounted() {
@@ -25,7 +29,7 @@ export default {
   },
   data() {
     return {
-      selected: 0,
+      selected: -1,
       text: "",
     }
   },

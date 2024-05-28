@@ -21,6 +21,9 @@
         <div class="submit" @click="submit">
           <p>実行</p>
         </div>
+        <div class="submit" @click="output">
+          <p>出力</p>
+        </div>
         <div class="submit" @click="input">
           <p>入力</p>
         </div>
@@ -60,7 +63,7 @@ export default {
     onAuthStateChanged(auth, (user) => {
       this.user = user;
     });
-    this.value = localStorage.getItem('value') || '\n\n\n';
+    this.value = localStorage.getItem('value') || '# -*- coding: utf-8 -*-\n\n\n';
   },
   computed: {
     branks() {
@@ -88,22 +91,25 @@ export default {
     submit() {
       this.result = '';
       this.loading = true;
+      this.showInput = false;
+      this.showOutput = true;
       axios.post('http://localhost:55555/post', {
         user: this.user,
         data: this.value,
         args: this.args,
       })
-      .then(function(res) {
+      .then((res) => {
         this.loading = false;
         this.result = res.data.res;
         if (res.data.err) {
           this.result += res.data.err;
         }
-      }.bind(this))
-      .catch(err => function() {
+      })
+      .catch((err) => {
         console.log(err);
         this.loading = false;
-      }.bind(this));
+        this.result = 'server error';
+      });
     },
     insertTab(e) {
       const textarea = e.target;
@@ -115,6 +121,10 @@ export default {
       textarea.value = updatedText;
       const newCursorPosition = cursorPosition + tab.length;
       textarea.setSelectionRange(newCursorPosition, newCursorPosition);
+    },
+    output() {
+      this.showInput = false;
+      this.showOutput = true;
     },
     input() {
       this.showInput = true;
