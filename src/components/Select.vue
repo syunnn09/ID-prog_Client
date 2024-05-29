@@ -1,14 +1,16 @@
 <template>
   <div class="select px-5">
-    <p v-html="question"></p>
-    <div class="selections">
+    <div class="selections d-grid gap-2 col-6">
+      <h5 v-html="question"></h5>
       <div class="form-check" v-for="(choice, i) in choices">
-        <input type="radio" class="form-check-input" :name="'selection-' + index" v-model="selected" :id="choice" :value="i">
-        <label class="form-check-label user-select-none" :for="choice">{{ choice }}</label>
+        <div class="inner">
+          <input type="radio" class="form-check-input" :name="'selection-' + index" v-model="selected" :id="choice" :value="i">
+          <label class="form-check-label user-select-none" :for="choice">{{ choice }}</label>
+        </div>
       </div>
-      <input type="submit" class="mt-2" @click="checkAnswer" value="決定">
-      <p>{{ text }}</p>
     </div>
+    <input type="submit" class="mt-2" @click="checkAnswer" value="決定">
+    <p>{{ text }}</p>
   </div>
 </template>
 
