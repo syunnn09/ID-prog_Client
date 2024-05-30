@@ -13,9 +13,10 @@
         @scroll="onScroll"
         @input="onInput"
         @keydown.tab.prevent="onInput"
-        autocollect="off"
-        autocapitalize="off"
-        spellcheck="off">
+        autocorrect="off"
+        autocomplete="off"
+        autocapitalize="false"
+        spellcheck="false">
       </textarea>
       <div class="customArea d-flex">
         <div class="submit" @click="submit">
