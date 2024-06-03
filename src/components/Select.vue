@@ -4,8 +4,8 @@
       <h5 v-html="question"></h5>
       <div class="form-check" v-for="(choice, i) in choices">
         <div class="inner">
-          <input type="radio" class="form-check-input" :name="'selection-' + index" v-model="selected" :id="choice" :value="i">
-          <label class="form-check-label user-select-none" :for="choice">{{ choice }}</label>
+          <input type="radio" class="form-check-input" :name="'selection-' + index" v-model="selected" :id="'selection-' + index + '-' + i" :value="i">
+          <label class="form-check-label user-select-none" :for="'selection-' + index + '-' + i">{{ choice }}</label>
         </div>
       </div>
     </div>

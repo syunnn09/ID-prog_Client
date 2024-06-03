@@ -6,20 +6,21 @@
       </div>
     </div>
     <div class="w-100">
-      <textarea
-        class="form-control textarea resize-none"
-        v-model="value"
-        ref="textarea"
-        @scroll="onScroll"
-        @input="onInput"
-        @keydown.tab.prevent="onInput"
-        @keydown.enter.prevent="onInput"
-        @keydown.prevent="onInput"
-        autocorrect="off"
-        autocomplete="off"
-        autocapitalize="false"
-        spellcheck="false">
-      </textarea>
+      <div class="highlight-container overflow-hidden">
+        <div ref="highlight" class="highlight" :style="{ top: divTop + 'px' }"></div>
+        <textarea
+          class="form-control textarea resize-none"
+          v-model="value"
+          ref="textarea"
+          @scroll="onScroll"
+          @input="onInput"
+          @keydown.tab.prevent="onInput"
+          autocorrect="off"
+          autocomplete="off"
+          autocapitalize="false"
+          spellcheck="false">
+        </textarea>
+      </div>
       <div class="customArea d-flex">
         <input type="submit" class="submit btn btn-primary" @click="submit" value="実行">
         <ul class="nav nav-tabs" id="myTab" role="tablist">
@@ -64,6 +65,9 @@ export default {
     });
     this.value = localStorage.getItem('value') || '# -*- coding: utf-8 -*-\n\n\n';
   },
+  mounted() {
+    this.highlightText();
+  },
   computed: {
     branks() {
       return this.getBranks(this.value);
@@ -76,7 +80,6 @@ export default {
     onInput(e) {
       e.preventDefault();
       e.stopPropagation();
-      console.log(e);
 
       switch (e.key) {
         case 'Tab':
@@ -89,6 +92,7 @@ export default {
           break;
       }
       localStorage.setItem('value', this.value);
+      this.highlightText();
     },
     onScroll(e) {
       this.divTop = -e.target.scrollTop;
@@ -137,6 +141,15 @@ export default {
       this.$nextTick(() => {
         this.$refs.textarea.focus();
       });
+    },
+    highlightText() {
+      const textarea = this.$refs.textarea;
+      const text = textarea.value;
+
+      const highlightText = "for";
+      const highlighted = text.replace(new RegExp(`(${highlightText})`, 'gi'), '<span>$1</span>');
+
+      this.$refs.highlight.innerHTML = highlighted.replace(/\n/g, '<br>').replace(/\t/g, '&emsp;&emsp;');
     }
   }
 }
@@ -150,10 +163,29 @@ export default {
     overflow: hidden;
   }
 
+  .highlight-container {
+    position: relative;
+
+    .highlight {
+      margin-left: 0.03rem;
+      position: absolute;
+      top: 0;
+      left: 0;
+      z-index: -100;
+
+      span {
+        color: red;
+      }
+    }
+  }
+
   .textarea {
     padding: 0;
     height: 50vh;
     box-shadow: none;
+    color: #0000;
+    caret-color: black;
+    background: transparent;
   }
   
   .resize-none {
