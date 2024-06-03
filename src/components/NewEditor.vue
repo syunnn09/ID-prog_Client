@@ -13,26 +13,24 @@
         @scroll="onScroll"
         @input="onInput"
         @keydown.tab.prevent="onInput"
+        @keydown.enter.prevent="onInput"
+        @keydown.prevent="onInput"
         autocorrect="off"
         autocomplete="off"
         autocapitalize="false"
         spellcheck="false">
       </textarea>
       <div class="customArea d-flex">
-        <div class="submit" @click="submit">
-          <p>実行</p>
-        </div>
-        <div class="submit" @click="output">
-          <p>出力</p>
-        </div>
-        <div class="submit" @click="input">
-          <p>入力</p>
-        </div>
+        <input type="submit" class="submit btn btn-primary" @click="submit" value="実行">
+        <ul class="nav nav-tabs" id="myTab" role="tablist">
+          <li><p @click="output" class="nav-link text-secondary user-select-none px-4" :class="{ active: showOutput }" id="detail-tab" data-bs-toggle="tab" role="tab" aria-controls="detail" aria-selected="true">出力</p></li>
+          <li><p @click="input" class="nav-link text-secondary user-select-none px-4" :class="{ active: showInput }" id="detail-tab" data-bs-toggle="tab" role="tab" aria-controls="detail" aria-selected="false">入力</p></li>
+        </ul>
       </div>
       <div class="result">
         <div v-html="result" v-if="showOutput"></div>
-        <div v-if="showInput" class="h-100">
-          <textarea v-model="args" class="inputTextarea resize-none"></textarea>
+        <div v-if="showInput" class="h-100 overflow-hidden">
+          <textarea v-model="args" ref="textarea" class="inputTextarea resize-none"></textarea>
         </div>
         <div class="loader" v-if="loading"></div>
       </div>
@@ -78,10 +76,16 @@ export default {
     onInput(e) {
       e.preventDefault();
       e.stopPropagation();
+      console.log(e);
 
       switch (e.key) {
         case 'Tab':
           this.insertTab(e);
+          break;
+        case 'Enter':
+          if (e.ctrlKey) {
+            this.submit();
+          }
           break;
       }
       localStorage.setItem('value', this.value);
@@ -130,6 +134,9 @@ export default {
     input() {
       this.showInput = true;
       this.showOutput = false;
+      this.$nextTick(() => {
+        this.$refs.textarea.focus();
+      });
     }
   }
 }
@@ -154,16 +161,8 @@ export default {
   }
 
   .customArea {
-    .submit {
-      width: fit-content;
-      bottom: 0.5rem;
-      left: 0.5rem;
-      border: 1px solid #000;
-      background-color: #fff;
-      border-radius: 3px;
-      padding: 5px 10px;
-      cursor: pointer;
-      z-index: 10;
+    .nav {
+      border-bottom: none;
     }
   }
 
