@@ -13,8 +13,7 @@
           v-model="value"
           ref="textarea"
           @scroll="onScroll"
-          @input="onInput"
-          @keydown.tab.prevent="onInput"
+          @keydown="onInput"
           autocorrect="off"
           autocomplete="off"
           autocapitalize="false"
@@ -78,17 +77,21 @@ export default {
       return (text.match(/\n/g) || []).length + 1;
     },
     onInput(e) {
-      e.preventDefault();
       e.stopPropagation();
 
       switch (e.key) {
         case 'Tab':
+          e.preventDefault();
           this.insertTab(e);
           break;
         case 'Enter':
           if (e.ctrlKey) {
+            e.preventDefault();
             this.submit();
           }
+          break;
+        case '(':
+          console.log('(');
           break;
       }
       localStorage.setItem('value', this.value);
@@ -143,8 +146,7 @@ export default {
       });
     },
     highlightText() {
-      const textarea = this.$refs.textarea;
-      const text = textarea.value;
+      const text = this.value;
 
       const highlightText = "for";
       const highlighted = text.replace(new RegExp(`(${highlightText})`, 'gi'), '<span>$1</span>');
@@ -167,6 +169,7 @@ export default {
     position: relative;
 
     .highlight {
+      display: none;
       margin-left: 0.03rem;
       position: absolute;
       top: 0;
@@ -183,7 +186,7 @@ export default {
     padding: 0;
     height: 50vh;
     box-shadow: none;
-    color: #0000;
+    // color: #0000;
     caret-color: black;
     background: transparent;
   }

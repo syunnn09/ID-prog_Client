@@ -2,8 +2,18 @@
   <div class="selectTab">
     <ul class="nav nav-tabs mb-3" id="myTab" role="tablist">
       <li v-for="i in questions" class="nav-item position-relative" role="presentation">
-        <p @click="changeTab(i)" class="nav-link text-secondary user-select-none px-5" :class="{ active: isActive(i) }" id="detail-tab" data-bs-toggle="tab" role="tab" aria-controls="detail" aria-selected="true">{{ i }}</p>
-        <i v-if="isCleared(i)" class="bi bi-circle position-absolute top-0 link-danger" style="right: 3px;"></i>
+        <p
+          @click="changeTab(i)"
+          class="nav-link text-secondary user-select-none px-5 bg-transparent"
+          :class="{ active: isActive(i) }"
+          id="detail-tab"
+          data-bs-toggle="tab"
+          role="tab"
+          aria-controls="detail"
+          :aria-selected="isActive(i)">
+          {{ this.data.sections[this.section].questions[i-1]['question_no'] }}
+        </p>
+        <i v-if="isCleared(i)" class="bi bi-circle position-absolute top-0 link-danger z-n1" style="right: 3px;"></i>
       </li>
     </ul>
   </div>
@@ -24,6 +34,10 @@ export default {
     section: {
       type: Number,
       required: true
+    },
+    collectTabs: {
+      type: Array,
+      required: true
     }
   },
   computed: {
@@ -39,7 +53,7 @@ export default {
       this.$emit('onChangeTab', i-1);
     },
     isCleared(i) {
-      return this.data.sections[this.section].questions[i-1].isCleared;
+      return this.collectTabs.includes(i);
     }
   }
 }

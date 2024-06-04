@@ -7,15 +7,17 @@
           <div @click="changeSection(i)">{{ section.title }}</div>
         </div>
       </div>
-      <SelectTab :data="data" :tab="tab" :section="section" @onChangeTab="onChangeTab" />
+      <SelectTab :data="data" :tab="tab" :section="section" :collectTabs="collectTabs" @onChangeTab="onChangeTab" />
       <div v-for="(question, index) of data.sections[section].questions" :key="index">
         <Select
           v-if="question.questionType === constant.QUESTION_TYPE.CHOICE"
           v-show="tab === index"
+          @clear="clear"
           :data="question"
           :index="index"
           :user="user"
           :section="section"
+          :isClear="isClear(question.question_no)"
         ></Select>
       </div>
     </div>
@@ -23,11 +25,11 @@
 </template>
 
 <script setup>
-import axios from 'axios';
 import constant from "@/consts/const";
-
 import Select from '@/components/Select.vue';
 import SelectTab from '@/components/SelectTab.vue';
+
+import axios from 'axios';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
 </script>
 
@@ -43,6 +45,7 @@ export default {
       tab: 0,
       section: 0,
       user: null,
+      collectTabs: [],
     }
   },
   created() {
@@ -63,6 +66,7 @@ export default {
       })
         .then((data) => {
           this.data = data.data;
+          this.setCollectTabs();
         });
     },
     onChangeTab(tab) {
@@ -70,11 +74,23 @@ export default {
     },
     changeSection(section) {
       this.section = section;
+      this.tab = 0;
+      this.setCollectTabs();
+    },
+    setCollectTabs() {
+      this.collectTabs = [];
+      for (let data of this.data.sections[this.section].questions) {
+        if (data.isCleared) {
+          this.collectTabs.push(data.question_no);
+        }
+      }
+    },
+    clear(question_no) {
+      this.collectTabs.push(question_no);
+    },
+    isClear(i) {
+      return this.collectTabs.includes(i);
     },
   }
 }
 </script>
-
-<style lang="scss">
-
-</style>
