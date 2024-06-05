@@ -35,11 +35,13 @@ export default {
   created() {
     const auth = getAuth();
     onAuthStateChanged(auth, (user) => {
-      if (user !== null) {
-        this.user = user;
-        this.getData(user);
+      if (user === null) {
+        this.$router.push('/login');
+        return;
       }
-    })
+      this.user = user;
+      this.getData(user);
+    });
   },
   methods: {
     getData(user) {
