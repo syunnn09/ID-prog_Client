@@ -236,7 +236,7 @@ export default {
       this.result = '';
       this.loading = true;
       axios.post('http://localhost:55555/post', {
-        user: this.user,
+        user: this.user.uid,
         data: this.getData()
       })
       .then(function(res) {

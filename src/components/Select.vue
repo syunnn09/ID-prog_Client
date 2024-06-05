@@ -1,7 +1,7 @@
 <template>
   <div class="select px-5">
-    <div class="d-flex">
-      <div class="selections gap-2 w-50">
+    <div class="d-flex sections">
+      <div class="selections gap-2" :class="data.code ? 'w-50' : 'w-100'">
         <h5 v-html="question"></h5>
         <div class="form-check" v-for="(choice, i) in choices">
           <div class="inner">
@@ -13,6 +13,7 @@
         <p>{{ text }}</p>
       </div>
       <div class="editor w-50" v-if="data.code">
+        <p class="d-flex justify-content-center">↓試してみましょう！</p>
         <NewEditor />
       </div>
     </div>
@@ -80,7 +81,7 @@ export default {
       if (this.selected === this.answer) {
         if (!this.isClear) {
           axios.post('http://localhost:55555/question/solve', {
-            user: JSON.stringify(this.user),
+            user: this.user.uid,
             id: this.id,
             section: this.section + 1,
             question_no: this.index + 1,
@@ -109,6 +110,16 @@ export default {
   code {
     white-space: pre;
     tab-size: 4;
+  }
+
+  @media screen and (max-width: 800px) {
+    .sections {
+      flex-direction: column;
+    }
+
+    .w-50 {
+      width: 100% !important;
+    }
   }
 }
 </style>

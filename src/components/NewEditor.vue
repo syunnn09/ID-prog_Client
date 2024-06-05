@@ -12,6 +12,7 @@
           class="form-control textarea resize-none"
           v-model="value"
           ref="textarea"
+          wrap="off"
           @scroll="onScroll"
           @keydown="onInput"
           autocorrect="off"
@@ -30,7 +31,7 @@
       <div class="result">
         <div v-html="result" v-if="showOutput"></div>
         <div v-if="showInput" class="h-100 overflow-hidden">
-          <textarea v-model="args" ref="textarea" class="inputTextarea resize-none"></textarea>
+          <textarea v-model="args" ref="textarea" class="inputTextarea resize-none form-control"></textarea>
         </div>
         <div class="loader" v-if="loading"></div>
       </div>
@@ -67,6 +68,11 @@ export default {
   mounted() {
     this.highlightText();
   },
+  watch: {
+    value() {
+      localStorage.setItem('value', this.value);
+    }
+  },
   computed: {
     branks() {
       return this.getBranks(this.value);
@@ -91,10 +97,8 @@ export default {
           }
           break;
         case '(':
-          console.log('(');
           break;
       }
-      localStorage.setItem('value', this.value);
       this.highlightText();
     },
     onScroll(e) {
@@ -106,7 +110,7 @@ export default {
       this.showInput = false;
       this.showOutput = true;
       axios.post('http://localhost:55555/post', {
-        user: this.user,
+        user: this.user.uid,
         data: this.value,
         args: this.args,
       })
@@ -121,6 +125,7 @@ export default {
         console.log(err);
         this.loading = false;
         this.result = 'server error';
+        this.result += err;
       });
     },
     insertTab(e) {
@@ -199,6 +204,10 @@ export default {
     .nav {
       border-bottom: none;
     }
+  }
+
+  .result {
+    border-radius: var(--bs-border-radius);
   }
 
   .inputTextarea {

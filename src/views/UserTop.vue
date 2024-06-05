@@ -37,14 +37,14 @@ export default {
     onAuthStateChanged(auth, (user) => {
       if (user !== null) {
         this.user = user;
-        this.getData();
+        this.getData(user);
       }
     })
   },
   methods: {
-    getData() {
+    getData(user) {
       axios.post('http://localhost:55555/api/data', {
-        user: this.user
+        user: user.uid
       })
         .then(data => { this.studies = data.data });
     }

@@ -62,11 +62,15 @@ export default {
       const num = this.$route.params.id;
       axios.post('http://localhost:55555/api/getDetail', {
         id: num,
-        user: JSON.stringify(this.user),
+        user: this.user.uid,
       })
         .then((data) => {
           this.data = data.data;
-          this.setCollectTabs();
+          if (this.data === null) {
+            this.$router.push('/');
+          } else {
+            this.setCollectTabs();
+          }
         });
     },
     onChangeTab(tab) {
@@ -87,6 +91,7 @@ export default {
     },
     clear(question_no) {
       this.collectTabs.push(question_no);
+      this.data.sections[this.section].questions[question_no-1].isCleared = true;
     },
     isClear(i) {
       return this.collectTabs.includes(i);
