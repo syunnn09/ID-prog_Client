@@ -1,30 +1,37 @@
-<script setup>
-import { RouterLink, RouterView } from 'vue-router'
-import { getAuth, signOut, onAuthStateChanged } from 'firebase/auth'
-</script>
-
 <template>
-  <header class="navbar navbar-light bg-light justify-content-between p-3">
-    <div class="title">
-      <h3>
-        <RouterLink to="/">ID-prog</RouterLink>
-      </h3>
-    </div>
-    <div v-show="isAuthChecked">
-      <div class="btns" v-if="user !== null">
-        <a href="javascript:void(0)" class="logout" v-if="user !== null" @click="logout">ログアウト</a>
+  <nav class="nav navbar bg-body-tertiary p-3">
+    <div class="container-fluid">
+      <div class="d-flex align-items-center gap-3">
+        <h3 class="title nav-item">
+          <RouterLink to="/">ID-prog</RouterLink>
+        </h3>
+        <div class="nav-item">
+          <a class="nav-link active" aria-current="page" href="editor">エディター</a>
+        </div>
       </div>
-      <div class="btns" v-else>
-        <RouterLink to="/signup" class="btn btn-outline-success p-1 mx-1">新規作成</RouterLink>
-        <RouterLink to="/login" class="btn btn-outline-success p-1 mx-1">ログイン</RouterLink>
+      <div>
+        <div v-show="isAuthChecked">
+          <div class="btns" v-if="user !== null">
+            <a href="javascript:void(0)" class="logout" @click="logout">ログアウト</a>
+          </div>
+          <div class="btns" v-else>
+            <RouterLink to="/signup" class="btn btn-outline-success p-1 mx-1">新規作成</RouterLink>
+            <RouterLink to="/login" class="btn btn-outline-success p-1 mx-1">ログイン</RouterLink>
+          </div>
+        </div>
       </div>
     </div>
-  </header>
+  </nav>
 
   <div class="routerView">
     <RouterView />
   </div>
 </template>
+
+<script setup>
+import { RouterLink, RouterView } from 'vue-router'
+import { getAuth, signOut, onAuthStateChanged } from 'firebase/auth'
+</script>
 
 <script>
 export default {
@@ -61,10 +68,6 @@ export default {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-}
-
-header {
-  width: 100vw;
 }
 
 .routerView {
