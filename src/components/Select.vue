@@ -112,6 +112,10 @@ export default {
     tab-size: 4;
   }
 
+  span {
+    font-size: 1rem;
+  }
+
   @media screen and (max-width: 800px) {
     .sections {
       flex-direction: column;

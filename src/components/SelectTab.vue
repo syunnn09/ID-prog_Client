@@ -11,7 +11,7 @@
           role="tab"
           aria-controls="detail"
           :aria-selected="isActive(i)">
-          {{ this.data.sections[this.section].questions[i-1]['question_no'] }}
+          {{ this.data.questions[i-1]['question_no'] }}
         </p>
         <i v-if="isCleared(i)" class="bi bi-circle position-absolute top-0 link-danger z-n1" style="right: 3px;"></i>
       </li>
@@ -42,7 +42,7 @@ export default {
   },
   computed: {
     questions() {
-      return this.data.sections[this.section].questions.length;
+      return this.data.questions.length;
     },
   },
   methods: {

@@ -2,13 +2,13 @@
   <div class="studyView">
     <div v-if="data">
       <h4>{{ data.title }}</h4>
-      <div class="sections d-flex gap-3">
+      <!-- <div class="sections d-flex gap-3">
         <div v-for="(section, i) of data.sections">
           <div @click="changeSection(i)">{{ section.title }}</div>
         </div>
-      </div>
+      </div> -->
       <SelectTab :data="data" :tab="tab" :section="section" :collectTabs="collectTabs" @onChangeTab="onChangeTab" />
-      <div v-for="(question, index) of data.sections[section].questions" :key="index">
+      <div v-for="(question, index) of data.questions" :key="index">
         <Select
           v-if="question.questionType === constant.QUESTION_TYPE.CHOICE"
           v-show="tab === index"
@@ -60,8 +60,10 @@ export default {
   methods: {
     getData() {
       const num = this.$route.params.id;
-      axios.post('http://localhost:55555/api/getDetail', {
-        id: num,
+      const section = this.$route.params.section;
+      axios.post('http://localhost:55555/api/getSection', {
+        url: num,
+        section: section,
         user: this.user.uid,
       })
         .then((data) => {
@@ -83,7 +85,7 @@ export default {
     },
     setCollectTabs() {
       this.collectTabs = [];
-      for (let data of this.data.sections[this.section].questions) {
+      for (let data of this.data.questions) {
         if (data.isCleared) {
           this.collectTabs.push(data.question_no);
         }
@@ -91,7 +93,7 @@ export default {
     },
     clear(question_no) {
       this.collectTabs.push(question_no);
-      this.data.sections[this.section].questions[question_no-1].isCleared = true;
+      this.data.questions[question_no-1].isCleared = true;
     },
     isClear(i) {
       return this.collectTabs.includes(i);
