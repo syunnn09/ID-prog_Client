@@ -46,6 +46,13 @@ import { getAuth, onAuthStateChanged } from 'firebase/auth';
 
 <script>
 export default {
+  props: {
+    useLocalStorage: {
+      type: Boolean,
+      required: false,
+      defualt: true
+    },
+  },
   data() {
     return {
       value: "",
@@ -63,14 +70,20 @@ export default {
     onAuthStateChanged(auth, (user) => {
       this.user = user;
     });
-    this.value = localStorage.getItem('value') || '# -*- coding: utf-8 -*-\n\n\n';
+    if (this.useLocalStorage) {
+      this.value = localStorage.getItem('value') || '# -*- coding: utf-8 -*-\n\n\n';
+    } else {
+      this.value = '# -*- coding: utf-8 -*-\n\n\n';
+    }
   },
   mounted() {
     this.highlightText();
   },
   watch: {
     value() {
-      localStorage.setItem('value', this.value);
+      if (this.useLocalStorage) {
+        localStorage.setItem('value', this.value);
+      }
     }
   },
   computed: {

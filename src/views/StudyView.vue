@@ -1,12 +1,10 @@
 <template>
   <div class="studyView">
     <div v-if="data">
-      <h4>{{ data.title }}</h4>
-      <!-- <div class="sections d-flex gap-3">
-        <div v-for="(section, i) of data.sections">
-          <div @click="changeSection(i)">{{ section.title }}</div>
-        </div>
-      </div> -->
+      <h5>
+        <RouterLink :to="{ name: 'study', params: { id: parentUrl }}">{{ parentTitle }}</RouterLink>
+        > {{ data.title }}
+      </h5>
       <SelectTab :data="data" :tab="tab" :section="section" :collectTabs="collectTabs" @onChangeTab="onChangeTab" />
       <div v-for="(question, index) of data.questions" :key="index">
         <Select
@@ -18,7 +16,19 @@
           :user="user"
           :section="section"
           :isClear="isClear(question.question_no)"
+          :id="data.id"
         ></Select>
+        <Question
+          v-if="question.questionType === constant.QUESTION_TYPE.QUESTION"
+          v-show="tab === index"
+          @clear="clear"
+          :data="question"
+          :index="index"
+          :user="user"
+          :section="section"
+          :isClear="isClear(question.question_no)"
+          :id="data.id"
+        ></Question>
       </div>
     </div>
   </div>
@@ -27,18 +37,16 @@
 <script setup>
 import constant from "@/consts/const";
 import Select from '@/components/Select.vue';
+import Question from "@/components/Question.vue";
 import SelectTab from '@/components/SelectTab.vue';
 
 import axios from 'axios';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
+import { RouterLink } from "vue-router";
 </script>
 
 <script>
 export default {
-  components: {
-    Select,
-    SelectTab
-  },
   data() {
     return {
       data: null,
@@ -56,6 +64,14 @@ export default {
         this.getData();
       }
     });
+  },
+  computed: {
+    parentTitle() {
+      return this.data.parent.title;
+    },
+    parentUrl() {
+      return this.data.parent.url;
+    }
   },
   methods: {
     getData() {

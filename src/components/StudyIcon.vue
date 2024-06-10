@@ -7,9 +7,7 @@
         </div>
         <div class="card-body">
           <p class="card-text">{{ study.title }}</p>
-          <div class="progress" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="height: 0.5rem;">
-            <div class="progress-bar" :style="width"></div>
-          </div>
+          <Progress :width="this.study.progress"></Progress>
         </div>
       </div>
     </router-link>
@@ -17,11 +15,13 @@
 </template>
 
 <script>
-import PythonLogo from './icons/PythonLogo.vue'
+import PythonLogo from './icons/PythonLogo.vue';
+import Progress from './Progress.vue';
 
 export default {
   components: {
-    PythonLogo
+    PythonLogo,
+    Progress
   },
   props: {
     study: {
@@ -29,10 +29,5 @@ export default {
       required: true,
     },
   },
-  computed: {
-    width() {
-      return `width: ${this.study.progress}%;`;
-    },
-  }
 }
 </script>

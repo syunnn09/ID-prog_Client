@@ -2,12 +2,16 @@
   <div class="selectionListView">
     <div v-if="data" class="d-flex flex-column gap-3 mt-3">
       <RouterLink :to="{ name: 'questions', params: { id: url, section: section.section } }" v-for="section of data.sections" class="d-flex justify-content-center">
-        <div class="col-xl-3 col-sm-6 col-12"> 
+        <div class="col-sm-6 col-12">
           <div class="card">
             <div class="card-body">
-              <div class="media">
+              <div class="media d-flex align-items-center justify-content-between">
                 <div class="media-body">
                   <p>{{ section.title }}</p>
+                </div>
+                <div class="media-body w-25 text-end">
+                  <p>{{ section.progress }}%</p>
+                  <Progress :width="section.progress"></Progress>
                 </div>
               </div>
             </div>
@@ -19,6 +23,8 @@
 </template>
 
 <script setup>
+import Progress from '@/components/Progress.vue';
+
 import axios from 'axios';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
 </script>

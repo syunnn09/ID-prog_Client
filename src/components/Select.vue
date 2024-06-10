@@ -48,6 +48,10 @@ export default {
     isClear: {
       type: Boolean,
       required: true
+    },
+    id: {
+      type: Number,
+      required: true
     }
   },
   data() {
@@ -72,9 +76,6 @@ export default {
     question_no() {
       return Number(this.data.question_no);
     },
-    id() {
-      return this.$route.params.id;
-    },
   },
   methods: {
     checkAnswer() {
@@ -87,7 +88,7 @@ export default {
             question_no: this.index + 1,
           })
             .then(res => {
-              if (res.data.status === 'true') {
+              if (res.data.status) {
                 this.text = "正解!";
                 this.$emit('clear', this.question_no);
               } else {

@@ -6,7 +6,7 @@
           <RouterLink to="/">ID-prog</RouterLink>
         </h3>
         <div class="nav-item">
-          <a class="nav-link active" aria-current="page" href="editor">エディター</a>
+          <RouterLink to="/editor" class="nav-link active" aria-current="page">エディター</RouterLink>
         </div>
       </div>
       <div>
