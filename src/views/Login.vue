@@ -1,6 +1,6 @@
 <template>
   <div class="login d-flex justify-content-center">
-    <div class="mb-3">
+    <div class="mb-3 w-50 max-width-500">
       <div class="w-100">
         <div class="text">
           <p v-if="text">{{ text }}</p>
@@ -69,3 +69,9 @@ export default {
   }
 }
 </script>
+
+<style lang="scss">
+.max-width-500 {
+  max-width: 500px;
+}
+</style>

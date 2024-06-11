@@ -16,7 +16,7 @@
           :user="user"
           :section="section"
           :isClear="isClear(question.question_no)"
-          :id="data.id"
+          :id="data.parent.id"
         ></Select>
         <Question
           v-if="question.questionType === constant.QUESTION_TYPE.QUESTION"
@@ -27,7 +27,7 @@
           :user="user"
           :section="section"
           :isClear="isClear(question.question_no)"
-          :id="data.id"
+          :id="data.parent.id"
         ></Question>
       </div>
     </div>

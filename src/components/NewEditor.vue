@@ -25,15 +25,18 @@
         <input type="submit" class="submit btn btn-primary" @click="submit" value="実行">
         <ul class="nav nav-tabs" id="myTab" role="tablist">
           <li><p @click="output" class="nav-link text-secondary user-select-none px-4" :class="{ active: showOutput }" id="detail-tab" data-bs-toggle="tab" role="tab" aria-controls="detail" aria-selected="true">出力</p></li>
-          <li><p @click="input" class="nav-link text-secondary user-select-none px-4" :class="{ active: showInput }" id="detail-tab" data-bs-toggle="tab" role="tab" aria-controls="detail" aria-selected="false">入力</p></li>
+          <li><p @click="input" v-if="useInput" class="nav-link text-secondary user-select-none px-4" :class="{ active: showInput }" id="detail-tab" data-bs-toggle="tab" role="tab" aria-controls="detail" aria-selected="false">入力</p></li>
         </ul>
       </div>
       <div class="result">
-        <div v-html="result" v-if="showOutput"></div>
-        <div v-if="showInput" class="h-100 overflow-hidden">
+        <div v-if="showOutput">
+          <p v-if="isQuestion" v-html="propResult"></p>
+          <p v-else v-html="propResult"></p>
+        </div>
+        <div v-if="useInput && showInput" class="h-100 overflow-hidden">
           <textarea v-model="args" ref="textarea" class="inputTextarea resize-none form-control"></textarea>
         </div>
-        <div class="loader" v-if="loading"></div>
+        <div class="loader" v-if="loading || propIsLoading"></div>
       </div>
     </div>
   </div>
@@ -47,11 +50,36 @@ import { getAuth, onAuthStateChanged } from 'firebase/auth';
 <script>
 export default {
   props: {
+    isQuestion: {
+      type: Boolean,
+      required: false,
+      default: false
+    },
     useLocalStorage: {
       type: Boolean,
       required: false,
       defualt: true
     },
+    useInput: {
+      type: Boolean,
+      required: false,
+      default: true
+    },
+    propData: {
+      type: String,
+      requried: false,
+      default: null
+    },
+    propResult: {
+      type: String,
+      required: false,
+      default: null
+    },
+    propIsLoading: {
+      type: Boolean,
+      required: false,
+      default: false,
+    }
   },
   data() {
     return {
@@ -83,6 +111,9 @@ export default {
     value() {
       if (this.useLocalStorage) {
         localStorage.setItem('value', this.value);
+      }
+      if (this.isQuestion) {
+        this.$emit('onChangeValue', this.value);
       }
     }
   },
@@ -119,6 +150,11 @@ export default {
     },
     submit() {
       this.result = '';
+
+      if (this.isQuestion) {
+        this.$emit('doTest');
+        return;
+      }
       this.loading = true;
       this.showInput = false;
       this.showOutput = true;
