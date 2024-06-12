@@ -86,7 +86,8 @@ export default {
       console.log("value:", this.value);
     },
     doTest() {
-      this.loading = true;
+      this.isLoading = true;
+      // this.result = '';
 
       axios.post('http://localhost:55555/test', {
         user: this.user.uid,

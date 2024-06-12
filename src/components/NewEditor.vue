@@ -31,7 +31,7 @@
       <div class="result">
         <div v-if="showOutput">
           <p v-if="isQuestion" v-html="propResult"></p>
-          <p v-else v-html="propResult"></p>
+          <p v-else v-html="result"></p>
         </div>
         <div v-if="useInput && showInput" class="h-100 overflow-hidden">
           <textarea v-model="args" ref="textarea" class="inputTextarea resize-none form-control"></textarea>
