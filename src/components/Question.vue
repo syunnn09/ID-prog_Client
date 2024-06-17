@@ -17,6 +17,13 @@
         </div>
       </div>
     </div>
+    <div class="d-flex gap-2">
+      <p>入力例:</p>
+      <select v-model="test_no">
+        <option value="0">1</option>
+        <option value="1">2</option>
+      </select>
+    </div>
     <NewEditor
       ref="editor"
       :is-question="true"
@@ -27,8 +34,28 @@
       @onChangeValue="onChangeValue"
       @doTest="doTest"
     ></NewEditor>
-    <div class="submit border" @click="submit">
-      <p>実行</p>
+    <div class="submit border cursor-pointer" @click="submit">
+      <p>テストする</p>
+    </div>
+    <div>
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <td>テスト番号</td>
+            <td>結果</td>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="(_, index) in data.testsCount" :key="index">
+            <td>テスト{{ index }}</td>
+            <td v-if="doProg && correct[index] === undefined">
+              <div class="loader2"></div>
+            </td>
+            <td v-else-if="doProg">{{ correct[index] ? '正解' : '不正解' }}</td>
+            <td v-else></td>
+          </tr>
+        </tbody>
+      </table>
     </div>
   </div>
 </template>
@@ -45,6 +72,9 @@ export default {
       value: "",
       result: "",
       isLoading: false,
+      doProg: false,
+      correct: [],
+      test_no: 0,
     }
   },
   props: {
@@ -73,6 +103,9 @@ export default {
       required: true
     }
   },
+  created() {
+    this.initCorrect();
+  },
   computed: {
     question() {
       return this.data.question;
@@ -82,12 +115,56 @@ export default {
     onChangeValue(value) {
       this.value = value;
     },
-    submit() {
-      console.log("value:", this.value);
+    initCorrect() {
+      this.correct = [];
+
+      for (let i = 0; i < this.data.testsCount; i++) {
+        this.correct.push(undefined);
+      }
+    },
+    async submit() {
+      this.doProg = true;
+      let isClear = true;
+      this.initCorrect();
+
+      for (let i = 0; i < this.data.testsCount; i++) {
+        await axios.post('http://localhost:55555/prob', {
+          user: this.user.uid,
+          data: this.value,
+          url: this.$route.params.id,
+          section: this.$route.params.section,
+          question_no: this.data.question_no,
+          test_no: i,
+        })
+          .then((res) => {
+            this.isLoading = false;
+            this.correct[i] = res.data.correct;
+            isClear = isClear && res.data.correct;
+          })
+          .catch((_) => {
+            this.isLoading = false;
+            this.correct[i] = false;
+            isClear = false;
+          });
+      }
+
+      if (!this.isClear && isClear) {
+        axios.post('http://localhost:55555/question/solve', {
+          user: this.user.uid,
+          id: this.id,
+          section: this.$route.params.section,
+          question_no: this.index + 1,
+        })
+          .then(res => {
+            if (res.data.status) {
+              this.$emit('clear', this.index + 1);
+            }
+          })
+      }
     },
     doTest() {
       this.isLoading = true;
-      // this.result = '';
+      this.result = '';
 
       axios.post('http://localhost:55555/test', {
         user: this.user.uid,
@@ -95,7 +172,7 @@ export default {
         url: this.$route.params.id,
         section: this.$route.params.section,
         question_no: this.data.question_no,
-        test_no: 0,
+        test_no: this.test_no,
       })
         .then((res) => {
           this.isLoading = false;
@@ -120,5 +197,36 @@ export default {
 .item {
   max-width: 768px;
   border-left: 3px solid #000;
+}
+
+.loader {
+  width: 30px;
+  aspect-ratio: 2;
+  --_g: no-repeat radial-gradient(circle closest-side,#000 90%,#0000);
+  background: 
+    var(--_g) 0%   50%,
+    var(--_g) 50%  50%,
+    var(--_g) 100% 50%;
+  background-size: calc(100%/3) 50%;
+  animation: l3 1s infinite linear;
+}
+@keyframes l3 {
+  20%{background-position:0%   0%, 50%  50%,100%  50%}
+  40%{background-position:0% 100%, 50%   0%,100%  50%}
+  60%{background-position:0%  50%, 50% 100%,100%   0%}
+  80%{background-position:0%  50%, 50%  50%,100% 100%}
+}
+
+.loader2 {
+  width: 50px;
+  aspect-ratio: 4;
+  background: radial-gradient(circle closest-side,#000 90%,#0000) 0/calc(100%/3) 100% space;
+  clip-path: inset(0 100% 0 0);
+  animation: l1 1s steps(4) infinite;
+}
+@keyframes l1 {
+  to{
+    clip-path: inset(0 -34% 0 0)
+  }
 }
 </style>

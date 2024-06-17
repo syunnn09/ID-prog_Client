@@ -75,3 +75,9 @@ export default {
   margin: 0 auto;
 }
 </style>
+
+<style>
+.cursor-pointer {
+  cursor: pointer;
+}
+</style>

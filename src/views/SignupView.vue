@@ -21,7 +21,13 @@
 </template>
 
 <script setup>
-import { getAuth, onAuthStateChanged, createUserWithEmailAndPassword } from 'firebase/auth';
+import {
+  getAuth,
+  onAuthStateChanged,
+  createUserWithEmailAndPassword,
+  GoogleAuthProvider,
+  signInWithRedirect
+} from 'firebase/auth';
 </script>
 
 <script>
@@ -35,11 +41,13 @@ export default {
   },
   mounted() {
     const auth = getAuth();
+    auth.languageCode = 'ja';
     onAuthStateChanged(auth, (user) => {
       if (user != null) {
         this.$router.push('/');
       }
-    })
+    });
+    // signInWithRedirect(auth, new GoogleAuthProvider());
   },
   methods: {
     create() {
@@ -73,7 +81,3 @@ export default {
   }
 }
 </script>
-
-<style lang="scss">
-
-</style>

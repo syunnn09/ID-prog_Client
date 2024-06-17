@@ -132,7 +132,7 @@ export default {
       switch (e.key) {
         case 'Tab':
           e.preventDefault();
-          this.insertTab(e);
+          this.insertText(e, '\t');
           break;
         case 'Enter':
           if (e.ctrlKey) {
@@ -141,9 +141,10 @@ export default {
           }
           break;
         case '(':
+          // this.insertText(e, ')');
           break;
       }
-      this.highlightText();
+      // this.highlightText();
     },
     onScroll(e) {
       this.divTop = -e.target.scrollTop;
@@ -177,15 +178,14 @@ export default {
         this.result += err;
       });
     },
-    insertTab(e) {
+    insertText(e, text) {
       const textarea = e.target;
       const cursorPosition = textarea.selectionStart;
       const textBeforeCursor = textarea.value.substring(0, cursorPosition);
       const textAfterCursor = textarea.value.substring(cursorPosition);
-      const tab = '\t';
-      const updatedText = textBeforeCursor + tab + textAfterCursor;
+      const updatedText = textBeforeCursor + text + textAfterCursor;
       textarea.value = updatedText;
-      const newCursorPosition = cursorPosition + tab.length;
+      const newCursorPosition = cursorPosition + text.length;
       textarea.setSelectionRange(newCursorPosition, newCursorPosition);
     },
     output() {
