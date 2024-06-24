@@ -1,6 +1,7 @@
 export default Object.freeze({
     QUESTION_TYPE: {
-        CHOICE: 1,
-        QUESTION: 2
+        LEARN   : 1,
+        CHOICE  : 2,
+        QUESTION: 3
     }
 });

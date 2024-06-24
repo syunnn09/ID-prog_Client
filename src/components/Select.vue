@@ -84,7 +84,7 @@ export default {
           axios.post('http://localhost:55555/question/solve', {
             user: this.user.uid,
             id: this.id,
-            section: this.section + 1,
+            section: this.section,
             question_no: this.index + 1,
           })
             .then(res => {

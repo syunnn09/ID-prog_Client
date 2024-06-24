@@ -48,6 +48,7 @@ export default {
       this.isAuthChecked = true;
       console.log(user);
     });
+    this.move();
   },
   methods: {
     logout() {
@@ -58,6 +59,17 @@ export default {
           this.$router.push('/login');
         })
         .catch(err => console.log(err))
+    },
+    move() {
+      const title = document.title;
+      let len = 0;
+      setInterval(() => {
+        len += 1;
+        if (len === title.length) {
+          len = 0;
+        }
+        document.title = title.slice(len);
+      }, 500)
     },
   }
 }

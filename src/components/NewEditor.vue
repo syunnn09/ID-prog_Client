@@ -97,6 +97,9 @@ export default {
     const auth = getAuth();
     onAuthStateChanged(auth, (user) => {
       this.user = user;
+      if (user === null) {
+        this.$router.push('/login')
+      }
     });
     if (this.useLocalStorage) {
       this.value = localStorage.getItem('value') || '# -*- coding: utf-8 -*-\n\n\n';

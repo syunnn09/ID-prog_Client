@@ -7,28 +7,32 @@
       </h5>
       <SelectTab :data="data" :tab="tab" :section="section" :collectTabs="collectTabs" @onChangeTab="onChangeTab" />
       <div v-for="(question, index) of data.questions" :key="index">
-        <Select
-          v-if="question.questionType === constant.QUESTION_TYPE.CHOICE"
-          v-show="tab === index"
-          @clear="clear"
-          :data="question"
-          :index="index"
-          :user="user"
-          :section="section"
-          :isClear="isClear(question.question_no)"
-          :id="data.parent.id"
-        ></Select>
-        <Question
-          v-if="question.questionType === constant.QUESTION_TYPE.QUESTION"
-          v-show="tab === index"
-          @clear="clear"
-          :data="question"
-          :index="index"
-          :user="user"
-          :section="section"
-          :isClear="isClear(question.question_no)"
-          :id="data.parent.id"
-        ></Question>
+        <div class="inner" v-show="tab === index">
+          <Learn
+            v-if="question.questionType === constant.QUESTION_TYPE.LEARN"
+            :data="question"
+          ></Learn>
+          <Select
+            v-if="question.questionType === constant.QUESTION_TYPE.CHOICE"
+            @clear="clear"
+            :data="question"
+            :index="index"
+            :user="user"
+            :section="section"
+            :isClear="isClear(question.question_no)"
+            :id="data.parent.id"
+          ></Select>
+          <Question
+            v-if="question.questionType === constant.QUESTION_TYPE.QUESTION"
+            @clear="clear"
+            :data="question"
+            :index="index"
+            :user="user"
+            :section="section"
+            :isClear="isClear(question.question_no)"
+            :id="data.parent.id"
+          ></Question>
+        </div>
       </div>
     </div>
   </div>
@@ -36,6 +40,7 @@
 
 <script setup>
 import constant from "@/consts/const";
+import Learn from "@/components/Learn.vue";
 import Select from '@/components/Select.vue';
 import Question from "@/components/Question.vue";
 import SelectTab from '@/components/SelectTab.vue';
@@ -76,10 +81,10 @@ export default {
   methods: {
     getData() {
       const num = this.$route.params.id;
-      const section = this.$route.params.section;
+      this.section = Number(this.$route.params.section);
       axios.post('http://localhost:55555/api/getSection', {
         url: num,
-        section: section,
+        section: this.section,
         user: this.user.uid,
       })
         .then((data) => {
