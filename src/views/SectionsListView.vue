@@ -1,9 +1,9 @@
 <template>
   <div class="selectionListView">
     <div v-if="data" class="d-flex flex-column gap-3 mt-3">
-      <div v-for="section of data.sections">
-        <RouterLink :to="{ name: 'questions', params: { id: url, section: section.section } }" class="d-flex justify-content-center">
-          <div class="col-sm-6 col-12">
+      <div v-for="section of data.sections" class="d-flex justify-content-center">
+        <div class="col-sm-6 col-12">
+          <RouterLink :to="{ name: 'questions', params: { id: url, section: section.section } }">
             <div class="card">
               <div class="card-body">
                 <div class="media d-flex align-items-center justify-content-between">
@@ -17,8 +17,8 @@
                 </div>
               </div>
             </div>
-          </div>
-        </RouterLink>
+          </RouterLink>
+        </div>
       </div>
     </div>
   </div>

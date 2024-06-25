@@ -48,7 +48,8 @@ export default {
       this.isAuthChecked = true;
       console.log(user);
     });
-    this.move();
+    const seconds = (document.title.length + 1) * 500 + 1000;
+    setInterval(this.move, seconds);
   },
   methods: {
     logout() {
@@ -63,10 +64,11 @@ export default {
     move() {
       const title = document.title;
       let len = 0;
-      setInterval(() => {
+      const interval = setInterval(() => {
         len += 1;
         if (len === title.length) {
           len = 0;
+          clearInterval(interval);
         }
         document.title = title.slice(len);
       }, 500)
