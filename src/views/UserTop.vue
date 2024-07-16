@@ -12,6 +12,7 @@
         </div>
       </div>
     </div>
+    <RouterLink to="/questionnaire">アンケート</RouterLink>
   </div>
 </template>
 
