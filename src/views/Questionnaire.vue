@@ -1,7 +1,15 @@
 <template>
   <div>
-    <textarea name="good" v-model="good" cols="30" rows="10"></textarea>
-    <textarea name="bad" v-model="bad" cols="30" rows="10"></textarea>
+    <div class="d-flex gap-3">
+      <div class="content">
+        <p>良かった点</p>
+        <textarea name="good" v-model="good" cols="50" rows="10"></textarea>
+      </div>
+      <div class="content">
+        <p>悪かった点</p>
+        <textarea name="bad" v-model="bad" cols="50" rows="10"></textarea>
+      </div>
+    </div>
     <div @click="submit" class="cursor-pointer">送信</div>
     <div>{{ res }}</div>
   </div>
