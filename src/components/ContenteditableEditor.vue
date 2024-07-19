@@ -1,16 +1,27 @@
 <template>
-  <div class="editor">
-    <div
-      class="inner"
-      @input="sync"
-      @keydown.tab.prevent="sync"
-      @scroll="onScroll"
-      contenteditable="true"
-      autocorrect="off"
-      autocomplete="off"
-      autocapitalize="false"
-      spellcheck="false"><div># -*- coding: utf-8 -*-</div><br><div></div><br></div>
-    <div class="inner2" v-html="html" ref="html" :style="{ top: divTop + 'px' }"></div>
+  <div class="main">
+    <div class="d-flex">
+      <div class="editor">
+        <div class="left-container">
+          <div class="left" :style="{ top: divTop + 'px' }">
+            <p v-for="i in lines">{{ i }}</p>
+          </div>
+        </div>
+        <div
+          class="inner"
+          @input="sync"
+          @keydown.tab.prevent="sync"
+          @scroll="onScroll"
+          contenteditable="true"
+          autocorrect="off"
+          autocomplete="off"
+          autocapitalize="false"
+          spellcheck="false"><div># -*- coding: utf-8 -*-</div><div><br></div><div><br></div></div>
+        <div class="html">
+          <div class="inner2" v-html="html" ref="html" :style="{ top: divTop + 'px' }"></div>
+        </div>
+      </div>
+    </div>
   </div>
   <p @click="test">テスト</p>
 </template>
@@ -26,6 +37,7 @@ export default {
     return {
       text: "# -*- coding: utf-8 -*-",
       divTop: 0,
+      lines: 3,
     }
   },
   computed: {
@@ -35,23 +47,23 @@ export default {
   },
   methods: {
     sync(e) {
-      let text = e.target.innerHTML;
       if (e.key === 'Tab') {
         this.insert();
       }
       const replaceTexts = ['for', 'if', 'in'];
-      let html = e.target.innerText;
-      // for (let line of e.target.innerText.split(' ')) {
-      //   for (const t of replaceTexts) {
-      //     // html = line.replaceAll(t, `<span class="red">${t}</span>`);
-      //     if (line === t) {
-      //       line = `<span class="red">${t}</span>`;
-      //     }
-      //   }
-      //   html += line;
-      // }
-      // text = line.replaceAll('print', '<span class="blue">print</span>');
-      this.text = text;
+      for (let line of e.target.children) {
+        let html = '';
+        for (let text of line.innerHTML.split(' ')) {
+          if (replaceTexts.includes(text)) {
+            html += `<span class="red">${text}</span>`;
+          } else {
+            html += text;
+          }
+        }
+        line.innerHTML = html;
+      }
+      this.text = e.target.innerHTML;
+      this.lines = e.target.children.length;
     },
     insert() {
       const selection = window.getSelection();
@@ -76,15 +88,16 @@ export default {
 .editor {
   height: 50vh;
   width: 100%;
-  border: 1px solid #000;
   position: relative;
   border-radius: 5px;
+  display: flex;
 }
 
-.inner, .inner2 {
+.inner, .html {
   padding: 0.25rem;
   width: 100%;
   height: 100%;
+  border: 1px solid #000;
   position: absolute;
   overflow: auto;
   outline: none;
@@ -99,6 +112,21 @@ export default {
 }
 .inner2 {
   z-index: -100;
+  position: relative;
+}
+
+.left-container {
+  height: 50vh;
+  overflow: hidden;
+  position: absolute;
+  left: -2rem;
+  padding: 0.25rem;
+  text-align: right;
+  width: 25px;
+}
+
+.left {
+  position: relative;
 }
 </style>
 
@@ -106,6 +134,10 @@ export default {
 .tab {
   display: inline-block;
   width: 2rem;
+}
+.space {
+  display: inline-block;
+  width: 10px;
 }
 .red {
   color: #f00;
