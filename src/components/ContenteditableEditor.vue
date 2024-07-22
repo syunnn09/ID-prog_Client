@@ -9,6 +9,7 @@
         </div>
         <div
           class="inner"
+          ref="origin"
           @input="sync"
           @keydown.tab.prevent="sync"
           @scroll="onScroll"
@@ -24,6 +25,7 @@
     </div>
   </div>
   <p @click="test">テスト</p>
+  <div class="display-none" ref="test"></div>
 </template>
 
 <script>
@@ -50,19 +52,26 @@ export default {
       if (e.key === 'Tab') {
         this.insert();
       }
-      const replaceTexts = ['for', 'if', 'in'];
-      for (let line of e.target.children) {
-        let html = '';
-        for (let text of line.innerHTML.split(' ')) {
-          if (replaceTexts.includes(text)) {
-            html += `<span class="red">${text}</span>`;
-          } else {
-            html += text;
-          }
-        }
-        line.innerHTML = html;
+      const replaceTexts = {
+        red: ['and', 'as', 'assert', 'async', 'await', 'break', 'continue', 'del', 'elif', 'else', 'except', 'finally', 'for', 'from', 'global', 'if', 'import', 'in', 'nonlocal', 'not', 'or', 'pass', 'raise', 'return', 'try', 'while', 'with', 'yield'],
+        blue: ['False', 'True', 'None', 'class', 'is', 'lambda']
       }
-      this.text = e.target.innerHTML;
+      let html = '';
+      for (let line of e.target.getElementsByTagName('div')) {
+        let lineText = '<div>';
+        for (let word of line.innerHTML.split(' ')) {
+          for (let key in replaceTexts) {
+            if (replaceTexts[key].includes(word)) {
+              word = word.replace(word, `<span class="${key}">${word}</span>`);
+            }
+          }
+          console.log(word)
+          lineText += word + ' ';
+        }
+        lineText += '</div>'
+        html += lineText;
+      }
+      this.text = html;
       this.lines = e.target.children.length;
     },
     insert() {
@@ -74,8 +83,9 @@ export default {
       range.setStartAfter(span);
     },
     test() {
-      console.log(this.text);
-      console.log(this.$refs.html.innerText);
+      this.$refs.test.innerHTML = this.text;
+      this.$refs.test.innerHTML = this.$refs.test.innerHTML.replaceAll('<span class="tab"></span>', '\t');
+      console.log(this.$refs.test.innerText)
     },
     onScroll(e) {
       this.divTop = -e.target.scrollTop;
@@ -127,6 +137,10 @@ export default {
 
 .left {
   position: relative;
+}
+
+.display-none {
+  display: none;
 }
 </style>
 
