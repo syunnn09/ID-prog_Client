@@ -6,6 +6,7 @@ import UserTop from '../views/UserTop.vue'
 import StudyView from '../views/StudyView.vue'
 import SectionsListView from '../views/SectionsListView.vue'
 import Questionnaire from '../views/Questionnaire.vue'
+import ContenteditableEditor from '../views/ContenteditableEditor.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -52,6 +53,11 @@ const router = createRouter({
       path: '/questionnaire',
       name: 'questionnaire',
       component: Questionnaire
+    },
+    {
+      path: '/contenteditable',
+      name: 'contenteditable',
+      component: ContenteditableEditor
     },
   ]
 });

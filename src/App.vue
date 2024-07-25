@@ -5,8 +5,9 @@
         <h3 class="title nav-item">
           <RouterLink to="/">ID-prog</RouterLink>
         </h3>
-        <div class="nav-item">
+        <div class="nav-item d-flex gap-3">
           <RouterLink to="/editor" class="nav-link active" aria-current="page">エディター</RouterLink>
+          <RouterLink to="/contenteditable" class="nav-link active">contenteditable</RouterLink>
         </div>
       </div>
       <div>
